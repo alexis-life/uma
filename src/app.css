@@ -1,0 +1,182 @@
+.page-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px var(--content-pad) 48px;
+}
+
+/* ── Horses tab ────────────────────────────────────── */
+.horses-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.horse-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.horse-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: var(--bg-surface);
+  border: 1px solid var(--c1);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--c9);
+  cursor: pointer;
+  text-align: left;
+}
+
+.horse-list-item:hover { background: var(--bg-hover); }
+
+.horse-list-item.is-active {
+  background: var(--c1);
+  border-color: var(--c6);
+  color: var(--c6);
+  font-weight: 600;
+}
+
+.grade-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 10px;
+}
+
+.grade-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+/* ── Card Library tab ──────────────────────────────── */
+.quick-add-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.quick-add-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-surface);
+  border: 1px solid var(--c2);
+  border-radius: var(--radius-md);
+  padding: 10px 8px;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+}
+
+.quick-add-tile:hover { border-color: var(--c6); background: var(--bg-hover); }
+
+.card-table-wrap {
+  overflow-x: auto;
+}
+
+/* ── Deck & Race Plan tab ──────────────────────────── */
+.selector-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.deck-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.deck-slot {
+  background: var(--bg-surface);
+  border: 1px solid var(--c1);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  text-align: center;
+}
+
+.skill-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skill-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  border-bottom: 1px solid var(--c1);
+  padding-bottom: 10px;
+}
+
+.skill-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+/* ── Agenda tab ─────────────────────────────────────── */
+.agenda-add-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.agenda-add-row .ax-input { flex: 1 1 240px; }
+
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.task-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--c1);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+}
+
+.task-row.is-done .task-text { text-decoration: line-through; color: var(--c7); }
+
+.task-text { flex: 1; font-size: 0.85rem; }
+
+.section-heading {
+  margin: 28px 0 12px;
+}
+.section-heading:first-child { margin-top: 0; }
+
+@media (max-width: 720px) {
+  .horses-layout { grid-template-columns: 1fr; }
+  .horse-list { max-height: 260px; }
+  .deck-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .deck-grid { grid-template-columns: 1fr; }
+}
