@@ -45,13 +45,24 @@ export default function HorsesTab({ horses, setHorses }) {
     const existingNames = new Set(horses.map((h) => h.name))
     const toAdd = buildTraineeRoster().filter((h) => !existingNames.has(h.name))
 
-    // Horses already in the roster with untouched default (all-B) grades get
-    // upgraded to real aptitude data too — anything manually edited is left alone.
+    // Horses already in the roster with untouched default (all-B) grades or
+    // an unset talent rank get upgraded to real data too — anything manually
+    // edited away from the default is left alone. None of the real talent
+    // ranks are ever 1, so a horse still sitting at the default 1★ is always
+    // safe to backfill.
     setHorses((prev) =>
       prev.map((h) => {
         const real = TRAINEE_APTITUDES[h.name]
-        if (!real || !isUntouchedDefault(h)) return h
-        return { ...h, aptitudes: real.aptitudes, styleApt: real.styleApt }
+        if (!real) return h
+        const patch = {}
+        if (isUntouchedDefault(h)) {
+          patch.aptitudes = real.aptitudes
+          patch.styleApt = real.styleApt
+        }
+        if ((h.talentRank ?? DEFAULT_TALENT_RANK) === DEFAULT_TALENT_RANK) {
+          patch.talentRank = real.talentRank
+        }
+        return Object.keys(patch).length > 0 ? { ...h, ...patch } : h
       }).concat(toAdd),
     )
     if (toAdd.length > 0) setSelectedId((prev) => prev ?? toAdd[0].id)
