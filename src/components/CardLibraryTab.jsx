@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { CARD_TYPES, RARITIES } from '../lib/constants'
 import { makeId } from '../lib/storage'
+import { SEED_CARDS, buildSeedCards } from '../lib/seedCards'
 
 function typeLabel(type) {
   return type.charAt(0).toUpperCase() + type.slice(1)
@@ -14,6 +15,13 @@ export default function CardLibraryTab({ cards, setCards }) {
       ...prev,
       { id: makeId(), name: `${typeLabel(type)} ${rarity}`, type, rarity, level: 1 },
     ])
+  }
+
+  function importSeedCards() {
+    const existingNames = new Set(cards.map((c) => c.name))
+    const toAdd = buildSeedCards().filter((c) => !existingNames.has(c.name))
+    if (toAdd.length === 0) return
+    setCards((prev) => [...prev, ...toAdd])
   }
 
   function importPasted() {
@@ -39,6 +47,11 @@ export default function CardLibraryTab({ cards, setCards }) {
 
   return (
     <div>
+      <div className="ax-header-actions" style={{ padding: 0, marginBottom: 20 }}>
+        <button className="ax-btn ax-btn--solid" onClick={importSeedCards}>Import my cards</button>
+        <span className="ax-meta">Loads your saved support card collection ({SEED_CARDS.length} cards)</span>
+      </div>
+
       <h3 className="section-heading">Quick-add by type &amp; rarity</h3>
       <p className="ax-meta" style={{ marginBottom: 12 }}>
         Card art can't be reliably identified from screenshots, so bulk-adding by type/rarity/level is the fastest way in — rename and set levels in the table below.
