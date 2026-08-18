@@ -1,5 +1,9 @@
 import { useState } from 'react'
-import { useLocalStorage, makeId } from './lib/storage'
+import { makeId } from './lib/storage'
+import { supabase } from './lib/supabaseClient'
+import { useSession } from './lib/useSession'
+import { useSupabaseTable } from './lib/useSupabaseTable'
+import LoginScreen from './components/LoginScreen'
 import HorsesTab from './components/HorsesTab'
 import CardLibraryTab from './components/CardLibraryTab'
 import DeckRacePlanTab from './components/DeckRacePlanTab'
@@ -7,10 +11,39 @@ import AgendaTab from './components/AgendaTab'
 
 const TABS = ['Horses', 'Card Library', 'Deck & Race Plan', 'Agenda']
 
+const horseMappers = {
+  fromDb: (row) => ({ id: row.id, name: row.name, talentRank: row.talent_rank, aptitudes: row.aptitudes, styleApt: row.style_apt }),
+  toDb: (item) => ({ id: item.id, name: item.name, talent_rank: item.talentRank, aptitudes: item.aptitudes, style_apt: item.styleApt }),
+}
+
+const cardMappers = {
+  fromDb: (row) => ({ id: row.id, name: row.name, type: row.type, rarity: row.rarity, level: row.level }),
+  toDb: (item) => ({ id: item.id, name: item.name, type: item.type, rarity: item.rarity, level: item.level }),
+}
+
+const agendaMappers = {
+  fromDb: (row) => ({ id: row.id, text: row.text, done: row.done, horseId: row.horse_id, created: row.created_at }),
+  toDb: (item) => ({ id: item.id, text: item.text, done: item.done, horse_id: item.horseId, created_at: item.created }),
+}
+
 export default function App() {
-  const [horses, setHorses] = useLocalStorage('uma.horses', [])
-  const [cards, setCards] = useLocalStorage('uma.cards', [])
-  const [agenda, setAgenda] = useLocalStorage('uma.agenda', [])
+  const session = useSession()
+
+  if (session === undefined) {
+    return <div className="ax-empty">Loading…</div>
+  }
+
+  if (session === null) {
+    return <LoginScreen />
+  }
+
+  return <AuthenticatedApp />
+}
+
+function AuthenticatedApp() {
+  const [horses, setHorses] = useSupabaseTable('uma_horses', horseMappers)
+  const [cards, setCards] = useSupabaseTable('uma_cards', cardMappers)
+  const [agenda, setAgenda] = useSupabaseTable('uma_agenda', agendaMappers)
   const [activeTab, setActiveTab] = useState('Horses')
 
   const pendingCount = agenda.filter((t) => !t.done).length
@@ -33,6 +66,9 @@ export default function App() {
         <div className="ax-header-titles">
           <h1 className="ax-title">uma</h1>
           <p className="ax-subtitle">Trainee roster, support card library, and race planning for Uma Musume: Pretty Derby</p>
+        </div>
+        <div className="ax-header-actions">
+          <button className="ax-btn" onClick={() => supabase.auth.signOut()}>Sign out</button>
         </div>
         <div className="ax-tabs-row">
           <div className="ax-tabs-inner">

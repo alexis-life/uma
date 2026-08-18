@@ -5,8 +5,8 @@ export const DISTANCES = ['Sprint', 'Mile', 'Medium', 'Long', 'Dirt']
 export const STYLES = ['Nige', 'Senkou', 'Sashi', 'Oikomi']
 
 // Display labels only — the keys above (Nige/Senkou/Sashi/Oikomi) stay as the
-// data model everywhere (localStorage, seed data) so existing saved horses
-// don't need a migration. Only what's shown on screen changes.
+// data model everywhere (Supabase columns, seed data) so existing saved
+// horses don't need a migration. Only what's shown on screen changes.
 export const STYLE_LABELS = {
   Nige: 'Front Runner',
   Senkou: 'Pace Chaser',

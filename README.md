@@ -4,22 +4,30 @@ Personal planning tool for **Uma Musume: Pretty Derby** — trainee roster, supp
 
 ## Data model — this site is different from my others
 
-My other subdomains (map, threats, cysa, data, budget, anime) build a static JSON payload from Obsidian at deploy time. **This site does not.** My roster, card library, and agenda change every time I play, so they need to be editable directly in the browser — there is no backend, no database, and no sync step.
+My other subdomains (map, threats, cysa, data, budget, anime) build a static JSON payload from Obsidian at deploy time. **This site does not.** My roster, card library, and agenda change every time I play, so they need to be editable — but unlike a first pass at this app, it's not just per-browser `localStorage` either. It's backed by **Supabase** (the same project used by my cysa+ study tracker, in separate `uma_`-prefixed tables) so the same data follows me across devices, gated behind a single login.
 
-Everything lives in **`localStorage`**, under three keys:
+Tables (see `supabase/schema.sql` for the full DDL + RLS policies):
 
-- `uma.horses` — trainee roster: `{ id, name, aptitudes: { Sprint, Mile, Medium, Long, Dirt }, styleApt: { Nige, Senkou, Sashi, Oikomi } }`, grades `S`–`G`
-- `uma.cards` — support card library: `{ id, name, type, rarity, level }`
-- `uma.agenda` — task list: `{ id, text, done, horseId, created }`
+- `uma_horses` — trainee roster: `id, name, talent_rank (1-5), aptitudes jsonb ({ Sprint, Mile, Medium, Long, Dirt }), style_apt jsonb ({ Nige, Senkou, Sashi, Oikomi })`, grades `S`–`G`
+- `uma_cards` — support card library: `id, name, type, rarity, level`
+- `uma_agenda` — task list: `id, text, done, horse_id, created_at`
 
-State is held in React and written to `localStorage` on every change (see `src/lib/storage.js`). Nothing is ever sent to a server — it's all local to whatever browser you're using, which also means data does **not** sync across devices/browsers on its own.
+Row Level Security is on for all three tables; the only policy is "any authenticated session gets full read/write access" — this is a single-user app, so there's exactly one login (created by hand in the Supabase dashboard, Authentication → Users), not per-row ownership.
 
-### Resetting / clearing local data
+The app reads/writes via `@supabase/supabase-js` (see `src/lib/useSupabaseTable.js`) instead of `localStorage` — every write is diffed against the last-synced snapshot and pushed to Supabase in the background, while the UI updates immediately.
 
-- Clear a single collection from the browser console: `localStorage.removeItem('uma.horses')` (or `.cards` / `.agenda`), then reload.
-- Clear everything the app stores: `localStorage.removeItem('uma.horses'); localStorage.removeItem('uma.cards'); localStorage.removeItem('uma.agenda');`
-- Or open DevTools → Application → Local Storage → `https://uma.alexischao.com` and delete keys from there.
-- There is no export/import or backup mechanism — back up manually (e.g. copy the JSON values out of DevTools) before clearing if you want to keep the data.
+### Environment variables
+
+Two are required, both public-safe (the anon/publishable key, not the `service_role` key):
+
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+
+Locally, put them in `.env.local` (gitignored). In CI, they're GitHub Actions repo secrets of the same names, injected at build time in `.github/workflows/deploy.yml`.
+
+### Resetting data
+
+There's no in-app export/import — use the Supabase Table Editor (or SQL Editor) directly on `uma_horses` / `uma_cards` / `uma_agenda` to inspect, back up, or clear rows.
 
 ## Development
 
@@ -27,6 +35,8 @@ State is held in React and written to `localStorage` on every change (see `src/l
 npm install
 npm run dev
 ```
+
+Requires `.env.local` with `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` set (see above) — the dev server won't be able to load or save data without them.
 
 ## Deploy
 
