@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { DISTANCES, STYLES, isWeakGrade } from '../lib/constants'
+import { DISTANCES, STYLES, STYLE_LABELS, isWeakGrade } from '../lib/constants'
 import { recommendDeck } from '../lib/deckLogic'
 import { RACE_PLANS, SKILL_PRIORITIES } from '../lib/racePlans'
 
@@ -16,7 +16,7 @@ export default function DeckRacePlanTab({ horses, cards, onAddAgendaTasks }) {
   const weakDistance = distanceGrade ? isWeakGrade(distanceGrade) : false
 
   function addAllSkills() {
-    const texts = SKILL_PRIORITIES[style].map((s) => `[${style}] ${s.category} — ${s.rationale}`)
+    const texts = SKILL_PRIORITIES[style].map((s) => `[${STYLE_LABELS[style]}] ${s.category} — ${s.rationale}`)
     onAddAgendaTasks(texts, horseId || null)
   }
 
@@ -36,7 +36,7 @@ export default function DeckRacePlanTab({ horses, cards, onAddAgendaTasks }) {
           <label className="label-micro">Running style</label>
           <select className="ax-input" value={style} onChange={(e) => setStyle(e.target.value)}>
             {STYLES.map((s) => (
-              <option key={s} value={s}>{s}</option>
+              <option key={s} value={s}>{STYLE_LABELS[s]}</option>
             ))}
           </select>
         </div>
@@ -56,7 +56,7 @@ export default function DeckRacePlanTab({ horses, cards, onAddAgendaTasks }) {
           <div className="ks-row" style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: (weakStyle || weakDistance) ? 12 : 0 }}>
             <div className="ax-stat ax-stat--bordered" style={{ minWidth: 120 }}>
               <div className="ax-stat-value">{styleGrade}</div>
-              <div className="ax-stat-label">{style} aptitude</div>
+              <div className="ax-stat-label">{STYLE_LABELS[style]} aptitude</div>
             </div>
             <div className="ax-stat ax-stat--bordered ax-stat--sp2" style={{ minWidth: 120 }}>
               <div className="ax-stat-value">{distanceGrade}</div>
@@ -65,7 +65,7 @@ export default function DeckRacePlanTab({ horses, cards, onAddAgendaTasks }) {
           </div>
           {(weakStyle || weakDistance) && (
             <p className="ax-meta" style={{ color: 'var(--error)' }}>
-              ⚠ {horse.name} has weak {weakStyle ? `${style} style` : ''}{weakStyle && weakDistance ? ' and ' : ''}{weakDistance ? `${distance} distance` : ''} aptitude ({weakStyle ? styleGrade : distanceGrade} grade) — expect a harder race in this matchup.
+              ⚠ {horse.name} has weak {weakStyle ? `${STYLE_LABELS[style]} style` : ''}{weakStyle && weakDistance ? ' and ' : ''}{weakDistance ? `${distance} distance` : ''} aptitude ({weakStyle ? styleGrade : distanceGrade} grade) — expect a harder race in this matchup.
             </p>
           )}
         </div>
@@ -73,7 +73,7 @@ export default function DeckRacePlanTab({ horses, cards, onAddAgendaTasks }) {
 
       <div className="form-grid-2">
         <div className="ax-card">
-          <h3 style={{ marginBottom: 10 }}>Race plan — {style}</h3>
+          <h3 style={{ marginBottom: 10 }}>Race plan — {STYLE_LABELS[style]}</h3>
           <p>{RACE_PLANS[style]}</p>
         </div>
 

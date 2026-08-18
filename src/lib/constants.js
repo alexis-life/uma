@@ -4,6 +4,16 @@ export const DISTANCES = ['Sprint', 'Mile', 'Medium', 'Long', 'Dirt']
 
 export const STYLES = ['Nige', 'Senkou', 'Sashi', 'Oikomi']
 
+// Display labels only — the keys above (Nige/Senkou/Sashi/Oikomi) stay as the
+// data model everywhere (localStorage, seed data) so existing saved horses
+// don't need a migration. Only what's shown on screen changes.
+export const STYLE_LABELS = {
+  Nige: 'Front Runner',
+  Senkou: 'Pace Chaser',
+  Sashi: 'Late Surger',
+  Oikomi: 'End Closer',
+}
+
 export const CARD_TYPES = ['speed', 'stamina', 'power', 'guts', 'wisdom', 'friend']
 
 export const RARITIES = ['R', 'SR', 'SSR']

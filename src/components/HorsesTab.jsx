@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { DISTANCES, STYLES, GRADES, gradeIndex, defaultAptitudes, defaultStyleApt } from '../lib/constants'
+import { DISTANCES, STYLES, STYLE_LABELS, GRADES, gradeIndex, defaultAptitudes, defaultStyleApt } from '../lib/constants'
 import { makeId } from '../lib/storage'
 import { buildTraineeRoster, TRAINEE_APTITUDES } from '../lib/seedHorses'
 
@@ -134,7 +134,7 @@ export default function HorsesTab({ horses, setHorses }) {
               <div className="grade-grid" style={{ marginBottom: 20 }}>
                 {STYLES.map((s) => (
                   <div className="grade-field" key={s}>
-                    <label className="label-micro">{s}</label>
+                    <label className="label-micro">{STYLE_LABELS[s]}</label>
                     <select className="ax-input" value={selected.styleApt[s]} onChange={(e) => updateStyleApt(s, e.target.value)}>
                       {GRADES.map((g) => (
                         <option key={g} value={g}>{g}</option>
@@ -145,7 +145,7 @@ export default function HorsesTab({ horses, setHorses }) {
               </div>
 
               <div className="ax-section-bar--light ax-section-bar" style={{ justifyContent: 'flex-start', marginBottom: 20 }}>
-                Best style: {bestStyle(selected.styleApt).styles.join(' / ')} ({bestStyle(selected.styleApt).grade})
+                Best style: {bestStyle(selected.styleApt).styles.map((s) => STYLE_LABELS[s]).join(' / ')} ({bestStyle(selected.styleApt).grade})
               </div>
 
               <button className="ax-btn" onClick={removeSelected}>Remove horse</button>
