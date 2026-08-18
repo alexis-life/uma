@@ -1,4 +1,4 @@
-import { defaultAptitudes, defaultStyleApt } from './constants'
+import { defaultAptitudes, defaultStyleApt, DEFAULT_TALENT_RANK } from './constants'
 import { makeId } from './storage'
 
 export const TRAINEE_NAMES = [
@@ -73,6 +73,7 @@ export function buildTraineeRoster() {
     return {
       id: makeId(),
       name,
+      talentRank: DEFAULT_TALENT_RANK,
       aptitudes: real ? real.aptitudes : defaultAptitudes('B'),
       styleApt: real ? real.styleApt : defaultStyleApt('B'),
     }

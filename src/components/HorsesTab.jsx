@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { DISTANCES, STYLES, STYLE_LABELS, GRADES, gradeIndex, defaultAptitudes, defaultStyleApt } from '../lib/constants'
+import { DISTANCES, STYLES, STYLE_LABELS, GRADES, TALENT_RANKS, DEFAULT_TALENT_RANK, gradeIndex, defaultAptitudes, defaultStyleApt } from '../lib/constants'
 import { makeId } from '../lib/storage'
 import { buildTraineeRoster, TRAINEE_APTITUDES } from '../lib/seedHorses'
 
@@ -33,6 +33,7 @@ export default function HorsesTab({ horses, setHorses }) {
     const horse = {
       id: makeId(),
       name: 'New Trainee',
+      talentRank: DEFAULT_TALENT_RANK,
       aptitudes: defaultAptitudes('B'),
       styleApt: defaultStyleApt('B'),
     }
@@ -68,6 +69,10 @@ export default function HorsesTab({ horses, setHorses }) {
     updateSelected({ styleApt: { ...selected.styleApt, [style]: grade } })
   }
 
+  function updateTalentRank(rank) {
+    updateSelected({ talentRank: Number(rank) })
+  }
+
   function removeSelected() {
     setHorses((prev) => prev.filter((h) => h.id !== selectedId))
     setSelectedId(null)
@@ -94,7 +99,7 @@ export default function HorsesTab({ horses, setHorses }) {
                   onClick={() => setSelectedId(h.id)}
                 >
                   <span>{h.name}</span>
-                  <span className="ax-badge">{bestStyle(h.styleApt).grade ?? '—'}</span>
+                  <span className="ax-badge">★{h.talentRank ?? DEFAULT_TALENT_RANK}</span>
                 </button>
               ))}
             </div>
@@ -106,14 +111,24 @@ export default function HorsesTab({ horses, setHorses }) {
             <div className="ax-empty">Select a horse to view or edit its aptitudes.</div>
           ) : (
             <>
-              <div className="form-row">
-                <label className="label-micro">Name</label>
-                <input
-                  className="ax-input"
-                  type="text"
-                  value={selected.name}
-                  onChange={(e) => updateSelected({ name: e.target.value })}
-                />
+              <div className="form-grid-2" style={{ marginBottom: 0 }}>
+                <div className="form-row">
+                  <label className="label-micro">Name</label>
+                  <input
+                    className="ax-input"
+                    type="text"
+                    value={selected.name}
+                    onChange={(e) => updateSelected({ name: e.target.value })}
+                  />
+                </div>
+                <div className="form-row">
+                  <label className="label-micro">Talent rank</label>
+                  <select className="ax-input" value={selected.talentRank ?? DEFAULT_TALENT_RANK} onChange={(e) => updateTalentRank(e.target.value)}>
+                    {TALENT_RANKS.map((r) => (
+                      <option key={r} value={r}>{'★'.repeat(r)} ({r})</option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               <h3 style={{ marginBottom: 10 }}>Distance aptitude</h3>

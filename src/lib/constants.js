@@ -14,6 +14,9 @@ export const STYLE_LABELS = {
   Oikomi: 'End Closer',
 }
 
+export const TALENT_RANKS = [1, 2, 3, 4, 5]
+export const DEFAULT_TALENT_RANK = 1
+
 export const CARD_TYPES = ['speed', 'stamina', 'power', 'guts', 'wisdom', 'friend']
 
 export const RARITIES = ['R', 'SR', 'SSR']
