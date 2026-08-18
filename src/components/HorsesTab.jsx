@@ -1,7 +1,14 @@
 import { useState, useMemo } from 'react'
 import { DISTANCES, STYLES, GRADES, gradeIndex, defaultAptitudes, defaultStyleApt } from '../lib/constants'
 import { makeId } from '../lib/storage'
-import { buildTraineeRoster } from '../lib/seedHorses'
+import { buildTraineeRoster, TRAINEE_APTITUDES } from '../lib/seedHorses'
+
+function isUntouchedDefault(horse) {
+  return (
+    DISTANCES.every((d) => horse.aptitudes[d] === 'B') &&
+    STYLES.every((s) => horse.styleApt[s] === 'B')
+  )
+}
 
 function bestStyle(styleApt) {
   let best = null
@@ -36,9 +43,17 @@ export default function HorsesTab({ horses, setHorses }) {
   function importTrainees() {
     const existingNames = new Set(horses.map((h) => h.name))
     const toAdd = buildTraineeRoster().filter((h) => !existingNames.has(h.name))
-    if (toAdd.length === 0) return
-    setHorses((prev) => [...prev, ...toAdd])
-    setSelectedId((prev) => prev ?? toAdd[0].id)
+
+    // Horses already in the roster with untouched default (all-B) grades get
+    // upgraded to real aptitude data too — anything manually edited is left alone.
+    setHorses((prev) =>
+      prev.map((h) => {
+        const real = TRAINEE_APTITUDES[h.name]
+        if (!real || !isUntouchedDefault(h)) return h
+        return { ...h, aptitudes: real.aptitudes, styleApt: real.styleApt }
+      }).concat(toAdd),
+    )
+    if (toAdd.length > 0) setSelectedId((prev) => prev ?? toAdd[0].id)
   }
 
   function updateSelected(patch) {
