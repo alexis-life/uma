@@ -104,7 +104,7 @@ export default function DeckRacePlanTab({ horses, cards, onAddAgendaTasks }) {
             <div className="deck-slot" key={c.id}>
               <div className="ax-badge" style={{ marginBottom: 6 }}>{c.rarity}</div>
               <div className="text-body" style={{ fontWeight: 600 }}>{c.name}</div>
-              <div className="ax-meta">{c.type} · Lv.{c.level}</div>
+              <div className="ax-meta">{c.type} · LB{c.limitBreak}</div>
             </div>
           ))}
         </div>

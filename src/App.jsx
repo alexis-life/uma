@@ -17,8 +17,8 @@ const horseMappers = {
 }
 
 const cardMappers = {
-  fromDb: (row) => ({ id: row.id, name: row.name, type: row.type, rarity: row.rarity, level: row.level }),
-  toDb: (item) => ({ id: item.id, name: item.name, type: item.type, rarity: item.rarity, level: item.level }),
+  fromDb: (row) => ({ id: row.id, name: row.name, type: row.type, rarity: row.rarity, limitBreak: row.limit_break }),
+  toDb: (item) => ({ id: item.id, name: item.name, type: item.type, rarity: item.rarity, limit_break: item.limitBreak }),
 }
 
 const agendaMappers = {

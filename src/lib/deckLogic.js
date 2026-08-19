@@ -17,7 +17,7 @@ export function recommendDeck(cards, style, count = 6) {
       if (b.weight !== a.weight) return b.weight - a.weight
       const rarityDiff = (RARITY_ORDER[b.card.rarity] ?? 0) - (RARITY_ORDER[a.card.rarity] ?? 0)
       if (rarityDiff !== 0) return rarityDiff
-      return (b.card.level ?? 0) - (a.card.level ?? 0)
+      return (b.card.limitBreak ?? 0) - (a.card.limitBreak ?? 0)
     })
     .slice(0, count)
     .map((entry) => entry.card)

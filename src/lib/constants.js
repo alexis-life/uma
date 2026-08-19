@@ -23,6 +23,8 @@ export const RARITIES = ['R', 'SR', 'SSR']
 
 export const RARITY_ORDER = { R: 1, SR: 2, SSR: 3 }
 
+export const LIMIT_BREAKS = [0, 1, 2, 3, 4]
+
 export function gradeIndex(grade) {
   const i = GRADES.indexOf(grade)
   return i === -1 ? GRADES.length - 1 : i

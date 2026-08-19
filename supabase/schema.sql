@@ -16,7 +16,7 @@ create table if not exists uma_cards (
   name text not null,
   type text not null,
   rarity text not null,
-  level integer not null default 1,
+  limit_break integer not null default 0,
   created_at timestamptz not null default now()
 );
 

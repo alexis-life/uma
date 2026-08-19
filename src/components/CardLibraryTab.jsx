@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { CARD_TYPES, RARITIES } from '../lib/constants'
+import { CARD_TYPES, RARITIES, LIMIT_BREAKS } from '../lib/constants'
 import { makeId } from '../lib/storage'
 import { SEED_CARDS, buildSeedCards } from '../lib/seedCards'
 
@@ -13,7 +13,7 @@ export default function CardLibraryTab({ cards, setCards }) {
   function quickAdd(type, rarity) {
     setCards((prev) => [
       ...prev,
-      { id: makeId(), name: `${typeLabel(type)} ${rarity}`, type, rarity, level: 1 },
+      { id: makeId(), name: `${typeLabel(type)} ${rarity}`, type, rarity, limitBreak: 0 },
     ])
   }
 
@@ -32,7 +32,7 @@ export default function CardLibraryTab({ cards, setCards }) {
     if (names.length === 0) return
     setCards((prev) => [
       ...prev,
-      ...names.map((name) => ({ id: makeId(), name, type: 'speed', rarity: 'R', level: 1 })),
+      ...names.map((name) => ({ id: makeId(), name, type: 'speed', rarity: 'R', limitBreak: 0 })),
     ])
     setPasteText('')
   }
@@ -54,7 +54,7 @@ export default function CardLibraryTab({ cards, setCards }) {
 
       <h3 className="section-heading">Quick-add by type &amp; rarity</h3>
       <p className="ax-meta" style={{ marginBottom: 12 }}>
-        Card art can't be reliably identified from screenshots, so bulk-adding by type/rarity/level is the fastest way in — rename and set levels in the table below.
+        Card art can't be reliably identified from screenshots, so bulk-adding by type/rarity is the fastest way in — rename and set limit breaks in the table below.
       </p>
       <div className="quick-add-grid" style={{ marginBottom: 28 }}>
         {CARD_TYPES.flatMap((type) =>
@@ -70,7 +70,7 @@ export default function CardLibraryTab({ cards, setCards }) {
       <h3 className="section-heading">Paste-import names</h3>
       <div className="ax-card" style={{ marginBottom: 28 }}>
         <p className="ax-meta" style={{ marginBottom: 10 }}>
-          One card name per line. Cards are added as Speed / R / Lv.1 — edit type, rarity, and level in the table.
+          One card name per line. Cards are added as Speed / R / LB0 — edit type, rarity, and limit break in the table.
         </p>
         <textarea
           className="ax-input"
@@ -95,7 +95,7 @@ export default function CardLibraryTab({ cards, setCards }) {
                 <th>Name</th>
                 <th>Type</th>
                 <th>Rarity</th>
-                <th>Level</th>
+                <th>Limit Break</th>
                 <th></th>
               </tr>
             </thead>
@@ -125,15 +125,16 @@ export default function CardLibraryTab({ cards, setCards }) {
                     </select>
                   </td>
                   <td>
-                    <input
+                    <select
                       className="ax-input"
-                      type="number"
-                      min={1}
-                      max={50}
-                      style={{ width: 64 }}
-                      value={c.level}
-                      onChange={(e) => updateCard(c.id, { level: Number(e.target.value) })}
-                    />
+                      style={{ width: 76 }}
+                      value={c.limitBreak}
+                      onChange={(e) => updateCard(c.id, { limitBreak: Number(e.target.value) })}
+                    >
+                      {LIMIT_BREAKS.map((lb) => (
+                        <option key={lb} value={lb}>LB{lb}</option>
+                      ))}
+                    </select>
                   </td>
                   <td>
                     <button className="ax-btn" onClick={() => removeCard(c.id)}>Remove</button>
