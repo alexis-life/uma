@@ -3,7 +3,7 @@ import { DISTANCES, STYLES, STYLE_LABELS, isWeakGrade } from '../lib/constants'
 import { recommendDeck } from '../lib/deckLogic'
 import { RACE_PLANS, SKILL_PRIORITIES } from '../lib/racePlans'
 
-export default function DeckRacePlanTab({ horses, cards, onAddAgendaTasks }) {
+export default function DeckRacePlanTab({ horses, cards }) {
   const [horseId, setHorseId] = useState(horses[0]?.id ?? '')
   const [style, setStyle] = useState('Nige')
   const [distance, setDistance] = useState('Mile')
@@ -14,11 +14,6 @@ export default function DeckRacePlanTab({ horses, cards, onAddAgendaTasks }) {
   const distanceGrade = horse?.aptitudes?.[distance] ?? null
   const weakStyle = styleGrade ? isWeakGrade(styleGrade) : false
   const weakDistance = distanceGrade ? isWeakGrade(distanceGrade) : false
-
-  function addAllSkills() {
-    const texts = SKILL_PRIORITIES[style].map((s) => `[${STYLE_LABELS[style]}] ${s.category} — ${s.rationale}`)
-    onAddAgendaTasks(texts, horseId || null)
-  }
 
   return (
     <div>
@@ -78,10 +73,7 @@ export default function DeckRacePlanTab({ horses, cards, onAddAgendaTasks }) {
         </div>
 
         <div className="ax-card">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-            <h3>Skills to prioritize</h3>
-            <button className="ax-btn" onClick={addAllSkills}>+ Add to agenda</button>
-          </div>
+          <h3 style={{ marginBottom: 10 }}>Skills to prioritize</h3>
           <div className="skill-list">
             {SKILL_PRIORITIES[style].map((s) => (
               <div className="skill-item" key={s.category}>

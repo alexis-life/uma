@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { makeId } from './lib/storage'
 import { supabase } from './lib/supabaseClient'
 import { useSession } from './lib/useSession'
 import { useSupabaseTable } from './lib/useSupabaseTable'
@@ -22,8 +21,8 @@ const cardMappers = {
 }
 
 const agendaMappers = {
-  fromDb: (row) => ({ id: row.id, text: row.text, done: row.done, horseId: row.horse_id, created: row.created_at }),
-  toDb: (item) => ({ id: item.id, text: item.text, done: item.done, horse_id: item.horseId, created_at: item.created }),
+  fromDb: (row) => ({ id: row.id, horseId: row.horse_id, raceId: row.race_id, raceName: row.race_name, created: row.created_at }),
+  toDb: (item) => ({ id: item.id, horse_id: item.horseId, race_id: item.raceId, race_name: item.raceName, created_at: item.created }),
 }
 
 export default function App() {
@@ -46,20 +45,6 @@ function AuthenticatedApp() {
   const [agenda, setAgenda] = useSupabaseTable('uma_agenda', agendaMappers)
   const [activeTab, setActiveTab] = useState('Horses')
 
-  const pendingCount = agenda.filter((t) => !t.done).length
-
-  function addAgendaTasks(texts, horseId = null) {
-    const list = Array.isArray(texts) ? texts : [texts]
-    const newTasks = list.map((text) => ({
-      id: makeId(),
-      text,
-      done: false,
-      horseId,
-      created: new Date().toISOString(),
-    }))
-    setAgenda((prev) => [...newTasks, ...prev])
-  }
-
   return (
     <>
       <header className="ax-header">
@@ -80,8 +65,8 @@ function AuthenticatedApp() {
                   onClick={() => setActiveTab(tab)}
                 >
                   {tab}
-                  {tab === 'Agenda' && pendingCount > 0 && (
-                    <span className="ax-badge" style={{ marginLeft: 8 }}>{pendingCount}</span>
+                  {tab === 'Agenda' && agenda.length > 0 && (
+                    <span className="ax-badge" style={{ marginLeft: 8 }}>{agenda.length}</span>
                   )}
                 </button>
               ))}
@@ -91,12 +76,18 @@ function AuthenticatedApp() {
       </header>
 
       <main className="page-content">
-        {activeTab === 'Horses' && <HorsesTab horses={horses} setHorses={setHorses} />}
-        {activeTab === 'Card Library' && <CardLibraryTab cards={cards} setCards={setCards} />}
-        {activeTab === 'Deck & Race Plan' && (
-          <DeckRacePlanTab horses={horses} cards={cards} onAddAgendaTasks={addAgendaTasks} />
-        )}
-        {activeTab === 'Agenda' && <AgendaTab agenda={agenda} setAgenda={setAgenda} horses={horses} />}
+        <div style={{ display: activeTab === 'Horses' ? 'block' : 'none' }}>
+          <HorsesTab horses={horses} setHorses={setHorses} />
+        </div>
+        <div style={{ display: activeTab === 'Card Library' ? 'block' : 'none' }}>
+          <CardLibraryTab cards={cards} setCards={setCards} />
+        </div>
+        <div style={{ display: activeTab === 'Deck & Race Plan' ? 'block' : 'none' }}>
+          <DeckRacePlanTab horses={horses} cards={cards} />
+        </div>
+        <div style={{ display: activeTab === 'Agenda' ? 'block' : 'none' }}>
+          <AgendaTab agenda={agenda} setAgenda={setAgenda} horses={horses} />
+        </div>
       </main>
     </>
   )

@@ -136,35 +136,34 @@
 
 .skill-item:last-child { border-bottom: none; padding-bottom: 0; }
 
-/* ── Agenda tab ─────────────────────────────────────── */
-.agenda-add-row {
-  display: flex;
+/* ── Agenda tab (per-horse G1 race picker) ─────────── */
+.race-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 24px;
 }
 
-.agenda-add-row .ax-input { flex: 1 1 240px; }
-
-.task-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.task-row {
+.race-option {
   display: flex;
   align-items: center;
   gap: 10px;
   background: var(--bg-surface);
   border: 1px solid var(--c1);
   border-radius: var(--radius-md);
-  padding: 10px 14px;
+  padding: 10px 12px;
+  cursor: pointer;
 }
 
-.task-row.is-done .task-text { text-decoration: line-through; color: var(--c7); }
+.race-option:hover { background: var(--bg-hover); }
 
-.task-text { flex: 1; font-size: 0.85rem; }
+.race-option.is-selected {
+  background: var(--c1);
+  border-color: var(--c6);
+}
+
+.race-option-info { flex: 1; }
+
+.race-grade-weak { background: var(--error-bg); color: var(--error); }
 
 .section-heading {
   margin: 28px 0 12px;

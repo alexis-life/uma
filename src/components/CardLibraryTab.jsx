@@ -41,7 +41,8 @@ export default function CardLibraryTab({ cards, setCards }) {
     setCards((prev) => prev.map((c) => (c.id === id ? { ...c, ...patch } : c)))
   }
 
-  function removeCard(id) {
+  function removeCard(id, name) {
+    if (!window.confirm(`Remove ${name}? This can't be undone.`)) return
     setCards((prev) => prev.filter((c) => c.id !== id))
   }
 
@@ -137,7 +138,7 @@ export default function CardLibraryTab({ cards, setCards }) {
                     </select>
                   </td>
                   <td>
-                    <button className="ax-btn" onClick={() => removeCard(c.id)}>Remove</button>
+                    <button className="ax-btn" onClick={() => removeCard(c.id, c.name)}>Remove</button>
                   </td>
                 </tr>
               ))}

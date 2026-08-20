@@ -20,12 +20,14 @@ create table if not exists uma_cards (
   created_at timestamptz not null default now()
 );
 
+-- Per-horse G1 race agenda for Independent Training runs.
 create table if not exists uma_agenda (
   id uuid primary key default gen_random_uuid(),
-  text text not null,
-  done boolean not null default false,
-  horse_id uuid references uma_horses(id) on delete set null,
-  created_at timestamptz not null default now()
+  horse_id uuid not null references uma_horses(id) on delete cascade,
+  race_id integer not null,
+  race_name text not null,
+  created_at timestamptz not null default now(),
+  unique (horse_id, race_id)
 );
 
 alter table uma_horses enable row level security;

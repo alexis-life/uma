@@ -85,6 +85,7 @@ export default function HorsesTab({ horses, setHorses }) {
   }
 
   function removeSelected() {
+    if (!window.confirm(`Remove ${selected.name}? This can't be undone.`)) return
     setHorses((prev) => prev.filter((h) => h.id !== selectedId))
     setSelectedId(null)
   }
