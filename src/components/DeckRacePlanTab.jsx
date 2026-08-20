@@ -9,7 +9,7 @@ export default function DeckRacePlanTab({ horses, cards }) {
   const [distance, setDistance] = useState('Mile')
 
   const horse = useMemo(() => horses.find((h) => h.id === horseId) ?? null, [horses, horseId])
-  const deck = useMemo(() => recommendDeck(cards, style, 6), [cards, style])
+  const deck = useMemo(() => recommendDeck(cards, style, distance, 6), [cards, style, distance])
   const styleGrade = horse?.styleApt?.[style] ?? null
   const distanceGrade = horse?.aptitudes?.[distance] ?? null
   const weakStyle = styleGrade ? isWeakGrade(styleGrade) : false

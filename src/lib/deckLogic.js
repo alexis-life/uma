@@ -3,11 +3,30 @@ import { RARITY_ORDER } from './constants'
 // Per-style weighting of card types. Higher weight = more slots reserved for
 // that type when building a recommended deck (see allocateSlots below) — not
 // a hard sort key, so a deck ends up mixed rather than one type maxed out.
+//
+// Grounded in real deck-building theory, not invented per-style archetypes:
+// Speed and Wisdom (Wit) are the top two priorities for nearly every style —
+// Wit maintains front position and recovers energy efficiently, which is why
+// Speed/Wit decks are the most common and consistent. What actually shifts
+// with running style is the Power-vs-Wisdom balance: front-loaded styles
+// (Front Runner, Pace Chaser) lean Wit to hold position; back-loaded styles
+// (Late Surger, End Closer) lean Power to accelerate past the field late.
+// Guts stays a low, situational pick across the board.
 export const STYLE_TYPE_WEIGHTS = {
-  Nige: { speed: 5, stamina: 2, power: 2, guts: 0, wisdom: 2, friend: 1 },
-  Senkou: { speed: 3, stamina: 1, power: 3, guts: 1, wisdom: 2, friend: 1 },
-  Sashi: { speed: 3, stamina: 3, power: 1, guts: 1, wisdom: 2, friend: 1 },
-  Oikomi: { speed: 1, stamina: 3, power: 1, guts: 3, wisdom: 2, friend: 1 },
+  Nige: { speed: 5, wisdom: 4, power: 1.5, stamina: 1, guts: 0.5, friend: 1 },
+  Senkou: { speed: 5, wisdom: 3.5, power: 2, stamina: 1, guts: 0.5, friend: 1 },
+  Sashi: { speed: 5, wisdom: 2, power: 3, stamina: 1.5, guts: 1, friend: 1 },
+  Oikomi: { speed: 4, wisdom: 2, power: 3.5, stamina: 1.5, guts: 1.5, friend: 1 },
+}
+
+// Stamina need is driven by race distance, not running style, so it's
+// applied as a boost on top of the base stamina weight above.
+export const DISTANCE_STAMINA_BOOST = {
+  Sprint: 0,
+  Mile: 0.5,
+  Medium: 2,
+  Long: 3.5,
+  Dirt: 1.5,
 }
 
 function compareCards(a, b) {
@@ -36,8 +55,10 @@ function allocateSlots(weights, count) {
   return Object.fromEntries(shares.map((s) => [s.type, s.slots]))
 }
 
-export function recommendDeck(cards, style, count = 6) {
-  const weights = STYLE_TYPE_WEIGHTS[style] ?? {}
+export function recommendDeck(cards, style, distance, count = 6) {
+  const baseWeights = STYLE_TYPE_WEIGHTS[style] ?? {}
+  const staminaBoost = DISTANCE_STAMINA_BOOST[distance] ?? 0
+  const weights = { ...baseWeights, stamina: (baseWeights.stamina ?? 0) + staminaBoost }
   const slotPlan = allocateSlots(weights, count)
 
   const deck = []
