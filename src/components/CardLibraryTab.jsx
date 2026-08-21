@@ -8,6 +8,18 @@ function typeLabel(type) {
   return type.charAt(0).toUpperCase() + type.slice(1)
 }
 
+const TYPE_ABBR = { speed: 'SPD', stamina: 'STA', power: 'PWR', guts: 'GUT', wisdom: 'WIS', friend: 'FRI' }
+
+function typeAbbr(type) {
+  return TYPE_ABBR[type] ?? type.slice(0, 3).toUpperCase()
+}
+
+function parseCardName(name) {
+  const m = /^(.*?)\s*\[(.+)\]\s*$/.exec(name || '')
+  if (!m) return { charName: name, title: null }
+  return { charName: m[1], title: m[2] }
+}
+
 function cardArtUrl(supportId) {
   if (!supportId) return null
   return `https://gametora.com/images/umamusume/supports/support_card_s_${supportId}.png`
@@ -139,60 +151,67 @@ export default function CardLibraryTab({ cards, setCards, readOnly = false }) {
         <div className="ax-card"><div className="ax-empty">No cards yet.{!readOnly && ' Import my cards or paste a GameTora export to get started.'}</div></div>
       ) : (
         <div className="card-grid">
-          {cards.map((c) => (
-            <div className="card-poster" key={c.id}>
-              {cardArtUrl(c.supportId) ? (
-                <img
-                  src={cardArtUrl(c.supportId)}
-                  alt=""
-                  className="card-poster-art"
-                  onError={(e) => { e.currentTarget.style.display = 'none' }}
-                />
-              ) : (
-                <div className="card-poster-art" />
-              )}
-              <div className="card-poster-body">
-                {readOnly ? (
-                  <div className="card-poster-name">{c.name}</div>
-                ) : (
-                  <input
-                    className="ax-input card-poster-name"
-                    type="text"
-                    value={c.name}
-                    onChange={(e) => updateCard(c.id, { name: e.target.value })}
-                  />
-                )}
-                {readOnly ? (
-                  <div className="ax-meta">{typeLabel(c.type)} · {c.rarity} · LB{c.limitBreak}</div>
-                ) : (
-                  <div className="card-poster-controls">
-                    <select className="ax-input" value={c.type} onChange={(e) => updateCard(c.id, { type: e.target.value })}>
-                      {CARD_TYPES.map((t) => (
-                        <option key={t} value={t}>{typeLabel(t)}</option>
-                      ))}
-                    </select>
-                    <select className="ax-input" value={c.rarity} onChange={(e) => updateCard(c.id, { rarity: e.target.value })}>
-                      {RARITIES.map((r) => (
-                        <option key={r} value={r}>{r}</option>
-                      ))}
-                    </select>
-                    <select
-                      className="ax-input"
-                      value={c.limitBreak}
-                      onChange={(e) => updateCard(c.id, { limitBreak: Number(e.target.value) })}
-                    >
-                      {LIMIT_BREAKS.map((lb) => (
-                        <option key={lb} value={lb}>LB{lb}</option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-                {!readOnly && (
-                  <button className="ax-btn" onClick={() => removeCard(c.id, c.name)}>Remove</button>
-                )}
+          {cards.map((c) => {
+            const { charName, title } = parseCardName(c.name)
+            return (
+              <div className={`card-poster card-poster--${c.rarity}`} key={c.id}>
+                <div className="card-poster-art-wrap">
+                  {cardArtUrl(c.supportId) ? (
+                    <img
+                      src={cardArtUrl(c.supportId)}
+                      alt=""
+                      className="card-poster-art"
+                      onError={(e) => { e.currentTarget.style.display = 'none' }}
+                    />
+                  ) : (
+                    <div className="card-poster-art" />
+                  )}
+                  <span className="card-poster-badge card-poster-badge--rarity">{c.rarity}</span>
+                  <span className="card-poster-badge card-poster-badge--type">{typeAbbr(c.type)}</span>
+                </div>
+                <div className="card-poster-body">
+                  {readOnly ? (
+                    <>
+                      <div className="card-poster-charname">{charName}</div>
+                      {title && <div className="card-poster-title">{title}</div>}
+                      <div className="ax-meta">LB{c.limitBreak}</div>
+                    </>
+                  ) : (
+                    <>
+                      <input
+                        className="ax-input"
+                        type="text"
+                        value={c.name}
+                        onChange={(e) => updateCard(c.id, { name: e.target.value })}
+                      />
+                      <div className="card-poster-controls">
+                        <select className="ax-input" value={c.type} onChange={(e) => updateCard(c.id, { type: e.target.value })}>
+                          {CARD_TYPES.map((t) => (
+                            <option key={t} value={t}>{typeLabel(t)}</option>
+                          ))}
+                        </select>
+                        <select className="ax-input" value={c.rarity} onChange={(e) => updateCard(c.id, { rarity: e.target.value })}>
+                          {RARITIES.map((r) => (
+                            <option key={r} value={r}>{r}</option>
+                          ))}
+                        </select>
+                        <select
+                          className="ax-input"
+                          value={c.limitBreak}
+                          onChange={(e) => updateCard(c.id, { limitBreak: Number(e.target.value) })}
+                        >
+                          {LIMIT_BREAKS.map((lb) => (
+                            <option key={lb} value={lb}>LB{lb}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <button className="ax-btn" onClick={() => removeCard(c.id, c.name)}>Remove</button>
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>

@@ -122,6 +122,21 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  border: 1px solid var(--c2);
+}
+
+.card-poster--SR {
+  border-color: var(--c5);
+  box-shadow: 0 1px 8px rgba(224, 87, 128, 0.2);
+}
+
+.card-poster--SSR {
+  border: 1.5px solid var(--c6);
+  box-shadow: 0 2px 10px rgba(185, 55, 94, 0.3);
+}
+
+.card-poster-art-wrap {
+  position: relative;
 }
 
 .card-poster-art {
@@ -132,17 +147,58 @@
   object-fit: cover;
 }
 
+.card-poster-badge {
+  position: absolute;
+  top: 6px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+  line-height: 1.4;
+}
+
+.card-poster-badge--rarity {
+  left: 6px;
+  background: var(--c3);
+  color: var(--c8);
+}
+
+.card-poster--SR .card-poster-badge--rarity {
+  background: var(--c5);
+  color: #fff;
+}
+
+.card-poster--SSR .card-poster-badge--rarity {
+  background: var(--c6);
+  color: #fff;
+}
+
+.card-poster-badge--type {
+  right: 6px;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--c7);
+}
+
 .card-poster-body {
   padding: 10px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
-.card-poster-name {
-  font-size: 0.78rem;
-  font-weight: 600;
+.card-poster-charname {
+  font-size: 0.8rem;
+  font-weight: 700;
   color: var(--c9);
+  line-height: 1.25;
+}
+
+.card-poster-title {
+  font-size: 0.68rem;
+  font-style: italic;
+  color: var(--c7);
+  line-height: 1.25;
 }
 
 .card-poster-controls {
