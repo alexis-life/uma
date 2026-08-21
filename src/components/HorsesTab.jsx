@@ -112,14 +112,6 @@ export default function HorsesTab({ horses, setHorses, readOnly = false }) {
     setHorses((prev) => prev.map((h) => (h.id === selectedId ? { ...h, ...patch } : h)))
   }
 
-  function updateAptitude(distance, grade) {
-    updateSelected({ aptitudes: { ...selected.aptitudes, [distance]: grade } })
-  }
-
-  function updateStyleApt(style, grade) {
-    updateSelected({ styleApt: { ...selected.styleApt, [style]: grade } })
-  }
-
   function updateTalentRank(rank) {
     updateSelected({ talentRank: Number(rank) })
   }
@@ -237,11 +229,7 @@ export default function HorsesTab({ horses, setHorses, readOnly = false }) {
                 {DISTANCES.map((d) => (
                   <div className="grade-field" key={d}>
                     <label className="label-micro">{d}</label>
-                    <select className="ax-input" value={selected.aptitudes[d]} onChange={(e) => updateAptitude(d, e.target.value)} disabled={readOnly}>
-                      {GRADES.map((g) => (
-                        <option key={g} value={g}>{g}</option>
-                      ))}
-                    </select>
+                    <div className="ax-input grade-display">{selected.aptitudes[d]}</div>
                   </div>
                 ))}
               </div>
@@ -251,11 +239,7 @@ export default function HorsesTab({ horses, setHorses, readOnly = false }) {
                 {STYLES.map((s) => (
                   <div className="grade-field" key={s}>
                     <label className="label-micro">{STYLE_LABELS[s]}</label>
-                    <select className="ax-input" value={selected.styleApt[s]} onChange={(e) => updateStyleApt(s, e.target.value)} disabled={readOnly}>
-                      {GRADES.map((g) => (
-                        <option key={g} value={g}>{g}</option>
-                      ))}
-                    </select>
+                    <div className="ax-input grade-display">{selected.styleApt[s]}</div>
                   </div>
                 ))}
               </div>
