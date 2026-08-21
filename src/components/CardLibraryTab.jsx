@@ -22,7 +22,7 @@ function parseCardName(name) {
 
 function cardArtUrl(supportId) {
   if (!supportId) return null
-  return `https://gametora.com/images/umamusume/supports/support_card_s_${supportId}.png`
+  return `https://media.gametora.com/umamusume/supports/full/small/${supportId}.png`
 }
 
 export default function CardLibraryTab({ cards, setCards, readOnly = false }) {

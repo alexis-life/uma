@@ -29,7 +29,6 @@
 /* ── Horses tab ────────────────────────────────────── */
 .horses-layout {
   display: grid;
-  grid-template-columns: 260px 1fr;
   gap: 20px;
   align-items: start;
 }
@@ -44,37 +43,48 @@
   margin-bottom: 20px;
 }
 
-.horse-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  max-height: 70vh;
-  overflow-y: auto;
+.horse-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 12px;
 }
 
-.horse-list-item {
+.horse-tile {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+  gap: 6px;
   background: var(--bg-surface);
   border: 1px solid var(--c1);
   border-radius: var(--radius-md);
-  padding: 10px 12px;
-  font-size: 0.82rem;
-  font-weight: 500;
-  color: var(--c9);
+  box-shadow: var(--shadow);
+  padding: 8px;
   cursor: pointer;
-  text-align: left;
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
 }
 
-.horse-list-item:hover { background: var(--bg-hover); }
+.horse-tile:hover { border-color: var(--c6); }
 
-.horse-list-item.is-active {
+.horse-tile.is-active {
   background: var(--c1);
   border-color: var(--c6);
-  color: var(--c6);
+}
+
+.horse-tile-art {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(160deg, var(--c2), var(--c5));
+}
+
+.horse-tile-name {
+  font-size: 0.72rem;
   font-weight: 600;
+  color: var(--c9);
+  line-height: 1.25;
 }
 
 .grade-grid {
@@ -111,7 +121,7 @@
 /* ── Card Library tab — poster grid ─────────────────── */
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 16px;
 }
 
@@ -140,7 +150,7 @@
 }
 
 .card-poster-art {
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 3 / 4;
   background: linear-gradient(160deg, var(--c2), var(--c5));
   display: block;
   width: 100%;
@@ -373,8 +383,6 @@
 .section-heading:first-child { margin-top: 0; }
 
 @media (max-width: 720px) {
-  .horses-layout { grid-template-columns: 1fr; }
-  .horse-list { max-height: 260px; }
   .deck-grid { grid-template-columns: repeat(2, 1fr); }
   .tt-slot-row { grid-template-columns: 1fr; }
 }

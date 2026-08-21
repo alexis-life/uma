@@ -169,26 +169,34 @@ export default function HorsesTab({ horses, setHorses, readOnly = false }) {
         </div>
       )}
 
-      <div className="horses-layout">
-        <div className="ax-card" style={{ padding: 12 }}>
-          {horses.length === 0 ? (
-            <div className="ax-empty">No horses yet. Add one or import your trainees.</div>
-          ) : (
-            <div className="horse-list">
-              {horses.map((h) => (
-                <button
-                  key={h.id}
-                  className={`horse-list-item${h.id === selectedId ? ' is-active' : ''}`}
-                  onClick={() => setSelectedId(h.id)}
-                >
-                  <span>{h.name}</span>
-                  <span className="ax-badge">★{h.talentRank ?? DEFAULT_TALENT_RANK}</span>
-                </button>
-              ))}
-            </div>
-          )}
+      {horses.length === 0 ? (
+        <div className="ax-card"><div className="ax-empty">No horses yet. Add one or import your trainees.</div></div>
+      ) : (
+        <div className="horse-gallery" style={{ marginBottom: 20 }}>
+          {horses.map((h) => (
+            <button
+              key={h.id}
+              className={`horse-tile${h.id === selectedId ? ' is-active' : ''}`}
+              onClick={() => setSelectedId(h.id)}
+            >
+              {charArtUrl(h.cardId) ? (
+                <img
+                  src={charArtUrl(h.cardId)}
+                  alt=""
+                  className="horse-tile-art"
+                  onError={(e) => { e.currentTarget.style.display = 'none' }}
+                />
+              ) : (
+                <div className="horse-tile-art" />
+              )}
+              <span className="horse-tile-name">{h.name}</span>
+              <span className="ax-badge">★{h.talentRank ?? DEFAULT_TALENT_RANK}</span>
+            </button>
+          ))}
         </div>
+      )}
 
+      <div className="horses-layout">
         <div className="ax-card">
           {!selected ? (
             <div className="ax-empty">Select a horse to view or edit its aptitudes.</div>
