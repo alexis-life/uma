@@ -8,8 +8,8 @@ export const TRAINEE_NAMES = [
   'Maruzensky', 'Matikanefukukitaru', 'Matikanefukukitaru (Full Armor)', 'Matikanetannhauser', 'Mayano Top Gun',
   'Mayano Top Gun (Wedding)', 'Mejiro McQueen', 'Mejiro Ryan', 'Mihono Bourbon', 'Mihono Bourbon (Valentine)', 'Narita Brian',
   'Nice Nature', 'Oguri Cap', 'Oguri Cap (Christmas)', 'Rice Shower', 'Sakura Bakushin O', 'Sakura Chiyono O', 'Satono Diamond',
-  'Seiun Sky', 'Seiun Sky (Ballroom)', 'Smart Falcon', 'Special Week', 'Super Creek', 'Taiki Shuttle', 'TM Opera O (New Year)',
-  'Tokai Teio', 'Tosen Jordan', 'Vodka', 'Winning Ticket',
+  'Seiun Sky', 'Seiun Sky (Ballroom)', 'Silence Suzuka', 'Smart Falcon', 'Special Week', 'Super Creek', 'Taiki Shuttle',
+  'TM Opera O (New Year)', 'Tokai Teio', 'Tosen Jordan', 'Vodka', 'Winning Ticket',
 ]
 
 // Real distance/style aptitude grades and talent rank (1-5★) for each
@@ -57,6 +57,7 @@ export const TRAINEE_APTITUDES = {
   'Satono Diamond': { talentRank: 3, aptitudes: { Sprint: 'G', Mile: 'C', Medium: 'A', Long: 'A', Dirt: 'G' }, styleApt: { Nige: 'G', Senkou: 'B', Sashi: 'A', Oikomi: 'D' } },
   'Seiun Sky': { talentRank: 3, aptitudes: { Sprint: 'G', Mile: 'C', Medium: 'A', Long: 'A', Dirt: 'G' }, styleApt: { Nige: 'A', Senkou: 'B', Sashi: 'D', Oikomi: 'E' } },
   'Seiun Sky (Ballroom)': { talentRank: 4, aptitudes: { Sprint: 'G', Mile: 'C', Medium: 'A', Long: 'A', Dirt: 'G' }, styleApt: { Nige: 'A', Senkou: 'B', Sashi: 'D', Oikomi: 'E' } },
+  'Silence Suzuka': { talentRank: 3, aptitudes: { Sprint: 'D', Mile: 'A', Medium: 'A', Long: 'E', Dirt: 'G' }, styleApt: { Nige: 'A', Senkou: 'C', Sashi: 'E', Oikomi: 'G' } },
   'Smart Falcon': { talentRank: 3, aptitudes: { Sprint: 'B', Mile: 'A', Medium: 'A', Long: 'E', Dirt: 'A' }, styleApt: { Nige: 'A', Senkou: 'D', Sashi: 'G', Oikomi: 'G' } },
   'Special Week': { talentRank: 3, aptitudes: { Sprint: 'F', Mile: 'C', Medium: 'A', Long: 'A', Dirt: 'G' }, styleApt: { Nige: 'G', Senkou: 'A', Sashi: 'A', Oikomi: 'C' } },
   'Super Creek': { talentRank: 4, aptitudes: { Sprint: 'G', Mile: 'G', Medium: 'A', Long: 'A', Dirt: 'G' }, styleApt: { Nige: 'D', Senkou: 'A', Sashi: 'B', Oikomi: 'G' } },
