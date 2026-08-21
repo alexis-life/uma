@@ -83,7 +83,7 @@ function AuthenticatedApp({ session }) {
             {!isAuthenticated && ' — viewing read-only'}
           </p>
         </div>
-        <div className="ax-header-actions">
+        <div className="ax-header-actions uma-topbar-actions">
           {isAuthenticated ? (
             <button className="ax-btn" onClick={() => supabase.auth.signOut()}>Sign out</button>
           ) : (
