@@ -20,6 +20,10 @@ function parseCardName(name) {
   return { charName: m[1], title: m[2] }
 }
 
+function limitBreakStars(limitBreak) {
+  return '★'.repeat(limitBreak) + '☆'.repeat(4 - limitBreak)
+}
+
 function cardArtUrl(supportId) {
   if (!supportId) return null
   return `https://media.gametora.com/umamusume/supports/full/small/${supportId}.png`
@@ -151,7 +155,7 @@ export default function CardLibraryTab({ cards, setCards, readOnly = false }) {
         <div className="ax-card"><div className="ax-empty">No cards yet.{!readOnly && ' Import my cards or paste a GameTora export to get started.'}</div></div>
       ) : (
         <div className="card-grid">
-          {cards.map((c) => {
+          {[...cards].sort((a, b) => a.name.localeCompare(b.name)).map((c) => {
             const { charName, title } = parseCardName(c.name)
             return (
               <div className={`card-poster card-poster--${c.rarity}`} key={c.id}>
@@ -174,7 +178,7 @@ export default function CardLibraryTab({ cards, setCards, readOnly = false }) {
                     <>
                       <div className="card-poster-charname">{charName}</div>
                       {title && <div className="card-poster-title">{title}</div>}
-                      <div className="ax-meta">LB{c.limitBreak}</div>
+                      <div className="card-poster-lb" title={`Limit Break ${c.limitBreak}`}>{limitBreakStars(c.limitBreak)}</div>
                     </>
                   ) : (
                     <>

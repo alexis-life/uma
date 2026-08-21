@@ -121,7 +121,7 @@
 /* ── Card Library tab — poster grid ─────────────────── */
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
   gap: 16px;
 }
 
@@ -209,6 +209,13 @@
   font-style: italic;
   color: var(--c7);
   line-height: 1.25;
+}
+
+.card-poster-lb {
+  font-size: 0.78rem;
+  color: var(--c6);
+  letter-spacing: 1px;
+  margin-top: 2px;
 }
 
 .card-poster-controls {
