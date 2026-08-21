@@ -103,17 +103,59 @@
   margin-bottom: 20px;
 }
 
-/* ── Card Library tab ──────────────────────────────── */
+/* ── Shared table wrapper (Team Trials meta table) ──── */
 .card-table-wrap {
   overflow-x: auto;
 }
 
-.card-art-thumb {
+/* ── Card Library tab — poster grid ─────────────────── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.card-poster {
+  background: var(--bg-surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-poster-art {
+  aspect-ratio: 1 / 1;
+  background: linear-gradient(160deg, var(--c2), var(--c5));
   display: block;
-  width: 40px;
-  height: 40px;
+  width: 100%;
   object-fit: cover;
-  border-radius: var(--radius-sm);
+}
+
+.card-poster-body {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.card-poster-name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--c9);
+}
+
+.card-poster-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.card-poster-controls .ax-input {
+  padding: 4px 8px;
+  font-size: 0.68rem;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 /* ── Deck & Race Plan tab ──────────────────────────── */

@@ -138,76 +138,61 @@ export default function CardLibraryTab({ cards, setCards, readOnly = false }) {
       {cards.length === 0 ? (
         <div className="ax-card"><div className="ax-empty">No cards yet.{!readOnly && ' Import my cards or paste a GameTora export to get started.'}</div></div>
       ) : (
-        <div className="ax-card card-table-wrap" style={{ padding: 0 }}>
-          <table>
-            <thead>
-              <tr>
-                <th></th>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Rarity</th>
-                <th>Limit Break</th>
-                {!readOnly && <th></th>}
-              </tr>
-            </thead>
-            <tbody>
-              {cards.map((c) => (
-                <tr key={c.id}>
-                  <td>
-                    {cardArtUrl(c.supportId) && (
-                      <img
-                        src={cardArtUrl(c.supportId)}
-                        alt=""
-                        className="card-art-thumb"
-                        onError={(e) => { e.currentTarget.style.display = 'none' }}
-                      />
-                    )}
-                  </td>
-                  <td>
-                    <input
-                      className="ax-input"
-                      type="text"
-                      value={c.name}
-                      onChange={(e) => updateCard(c.id, { name: e.target.value })}
-                      disabled={readOnly}
-                    />
-                  </td>
-                  <td>
-                    <select className="ax-input" value={c.type} onChange={(e) => updateCard(c.id, { type: e.target.value })} disabled={readOnly}>
+        <div className="card-grid">
+          {cards.map((c) => (
+            <div className="card-poster" key={c.id}>
+              {cardArtUrl(c.supportId) ? (
+                <img
+                  src={cardArtUrl(c.supportId)}
+                  alt=""
+                  className="card-poster-art"
+                  onError={(e) => { e.currentTarget.style.display = 'none' }}
+                />
+              ) : (
+                <div className="card-poster-art" />
+              )}
+              <div className="card-poster-body">
+                {readOnly ? (
+                  <div className="card-poster-name">{c.name}</div>
+                ) : (
+                  <input
+                    className="ax-input card-poster-name"
+                    type="text"
+                    value={c.name}
+                    onChange={(e) => updateCard(c.id, { name: e.target.value })}
+                  />
+                )}
+                {readOnly ? (
+                  <div className="ax-meta">{typeLabel(c.type)} · {c.rarity} · LB{c.limitBreak}</div>
+                ) : (
+                  <div className="card-poster-controls">
+                    <select className="ax-input" value={c.type} onChange={(e) => updateCard(c.id, { type: e.target.value })}>
                       {CARD_TYPES.map((t) => (
                         <option key={t} value={t}>{typeLabel(t)}</option>
                       ))}
                     </select>
-                  </td>
-                  <td>
-                    <select className="ax-input" value={c.rarity} onChange={(e) => updateCard(c.id, { rarity: e.target.value })} disabled={readOnly}>
+                    <select className="ax-input" value={c.rarity} onChange={(e) => updateCard(c.id, { rarity: e.target.value })}>
                       {RARITIES.map((r) => (
                         <option key={r} value={r}>{r}</option>
                       ))}
                     </select>
-                  </td>
-                  <td>
                     <select
                       className="ax-input"
-                      style={{ width: 76 }}
                       value={c.limitBreak}
                       onChange={(e) => updateCard(c.id, { limitBreak: Number(e.target.value) })}
-                      disabled={readOnly}
                     >
                       {LIMIT_BREAKS.map((lb) => (
                         <option key={lb} value={lb}>LB{lb}</option>
                       ))}
                     </select>
-                  </td>
-                  {!readOnly && (
-                    <td>
-                      <button className="ax-btn" onClick={() => removeCard(c.id, c.name)}>Remove</button>
-                    </td>
-                  )}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+                )}
+                {!readOnly && (
+                  <button className="ax-btn" onClick={() => removeCard(c.id, c.name)}>Remove</button>
+                )}
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>
