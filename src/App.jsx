@@ -1,14 +1,15 @@
-import { useState } from 'react'
 import { supabase } from './lib/supabaseClient'
 import { useSession } from './lib/useSession'
 import { useSupabaseTable } from './lib/useSupabaseTable'
+import { useHashTab } from './lib/useHashTab'
 import LoginScreen from './components/LoginScreen'
 import HorsesTab from './components/HorsesTab'
 import CardLibraryTab from './components/CardLibraryTab'
 import DeckRacePlanTab from './components/DeckRacePlanTab'
 import AgendaTab from './components/AgendaTab'
+import TeamTrialsTab from './components/TeamTrialsTab'
 
-const TABS = ['Horses', 'Card Library', 'Deck & Race Plan', 'Agenda']
+const TABS = ['Horses', 'Card Library', 'Deck & Race Plan', 'Agenda', 'Team Trials']
 
 const horseMappers = {
   fromDb: (row) => ({ id: row.id, name: row.name, talentRank: row.talent_rank, aptitudes: row.aptitudes, styleApt: row.style_apt }),
@@ -23,6 +24,33 @@ const cardMappers = {
 const agendaMappers = {
   fromDb: (row) => ({ id: row.id, horseId: row.horse_id, raceId: row.race_id, raceName: row.race_name, created: row.created_at }),
   toDb: (item) => ({ id: item.id, horse_id: item.horseId, race_id: item.raceId, race_name: item.raceName, created_at: item.created }),
+}
+
+const veteranMappers = {
+  fromDb: (row) => ({
+    id: row.id,
+    horseId: row.horse_id,
+    name: row.name,
+    distanceCategory: row.distance_category,
+    style: row.style,
+    distanceGrade: row.distance_grade,
+    styleGrade: row.style_grade,
+    isAce: row.is_ace,
+    reliableUnique: row.reliable_unique,
+    notes: row.notes,
+  }),
+  toDb: (item) => ({
+    id: item.id,
+    horse_id: item.horseId || null,
+    name: item.name,
+    distance_category: item.distanceCategory,
+    style: item.style,
+    distance_grade: item.distanceGrade,
+    style_grade: item.styleGrade,
+    is_ace: item.isAce,
+    reliable_unique: item.reliableUnique,
+    notes: item.notes,
+  }),
 }
 
 export default function App() {
@@ -43,7 +71,8 @@ function AuthenticatedApp() {
   const [horses, setHorses] = useSupabaseTable('uma_horses', horseMappers)
   const [cards, setCards] = useSupabaseTable('uma_cards', cardMappers)
   const [agenda, setAgenda] = useSupabaseTable('uma_agenda', agendaMappers)
-  const [activeTab, setActiveTab] = useState('Horses')
+  const [veterans, setVeterans] = useSupabaseTable('uma_veterans', veteranMappers)
+  const [activeTab, setActiveTab] = useHashTab('Horses')
 
   return (
     <>
@@ -87,6 +116,9 @@ function AuthenticatedApp() {
         </div>
         <div style={{ display: activeTab === 'Agenda' ? 'block' : 'none' }}>
           <AgendaTab agenda={agenda} setAgenda={setAgenda} horses={horses} />
+        </div>
+        <div style={{ display: activeTab === 'Team Trials' ? 'block' : 'none' }}>
+          <TeamTrialsTab veterans={veterans} setVeterans={setVeterans} horses={horses} cards={cards} />
         </div>
       </main>
     </>

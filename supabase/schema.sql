@@ -30,9 +30,28 @@ create table if not exists uma_agenda (
   unique (horse_id, race_id)
 );
 
+-- Team Trials roster: up to 3 Veteran Umas per distance category. Veterans
+-- are completed/trained career runs, distinct from uma_horses (which track
+-- a character card's base/potential aptitude) -- so their grades are entered
+-- independently rather than inherited from the linked horse.
+create table if not exists uma_veterans (
+  id uuid primary key default gen_random_uuid(),
+  horse_id uuid references uma_horses(id) on delete set null,
+  name text not null,
+  distance_category text not null,
+  style text not null,
+  distance_grade text not null default 'A',
+  style_grade text not null default 'A',
+  is_ace boolean not null default false,
+  reliable_unique boolean not null default true,
+  notes text not null default '',
+  created_at timestamptz not null default now()
+);
+
 alter table uma_horses enable row level security;
 alter table uma_cards enable row level security;
 alter table uma_agenda enable row level security;
+alter table uma_veterans enable row level security;
 
 -- Single-user app: any authenticated session (there will only ever be the
 -- one account you create) gets full read/write access.
@@ -43,4 +62,7 @@ create policy "uma_cards_authenticated_all" on uma_cards
   for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
 
 create policy "uma_agenda_authenticated_all" on uma_agenda
+  for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
+
+create policy "uma_veterans_authenticated_all" on uma_veterans
   for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');

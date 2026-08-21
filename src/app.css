@@ -165,6 +165,82 @@
 
 .race-grade-weak { background: var(--error-bg); color: var(--error); }
 
+/* ── Team Trials tab ────────────────────────────────── */
+.tt-suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tt-suggestion-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.tt-category-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.tt-slot-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.tt-slot {
+  position: relative;
+  background: var(--bg-surface);
+  border: 1px solid var(--c1);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  padding: 14px 12px;
+  text-align: left;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 92px;
+}
+
+.tt-slot:hover { border-color: var(--c6); }
+
+.tt-slot--empty {
+  align-items: center;
+  justify-content: center;
+  color: var(--c7);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-style: dashed;
+  box-shadow: none;
+}
+
+.tt-slot-grades {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tt-ace-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: var(--c6);
+  color: #fff;
+}
+
+.tt-editor {
+  margin-bottom: 28px;
+  border: 1px solid var(--c6);
+}
+
 .section-heading {
   margin: 28px 0 12px;
 }
@@ -174,6 +250,7 @@
   .horses-layout { grid-template-columns: 1fr; }
   .horse-list { max-height: 260px; }
   .deck-grid { grid-template-columns: repeat(2, 1fr); }
+  .tt-slot-row { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 480px) {
