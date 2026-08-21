@@ -4,6 +4,8 @@ export const DISTANCES = ['Sprint', 'Mile', 'Medium', 'Long', 'Dirt']
 
 export const STYLES = ['Nige', 'Senkou', 'Sashi', 'Oikomi']
 
+export const TRACK_TYPES = ['Turf', 'Dirt']
+
 // Display labels only — the keys above (Nige/Senkou/Sashi/Oikomi) stay as the
 // data model everywhere (Supabase columns, seed data) so existing saved
 // horses don't need a migration. Only what's shown on screen changes.
