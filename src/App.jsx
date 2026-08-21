@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { supabase } from './lib/supabaseClient'
 import { useSession } from './lib/useSession'
 import { useSupabaseTable } from './lib/useSupabaseTable'
@@ -60,29 +61,34 @@ export default function App() {
     return <div className="ax-empty">Loading…</div>
   }
 
-  if (session === null) {
-    return <LoginScreen />
-  }
-
-  return <AuthenticatedApp />
+  return <AuthenticatedApp session={session} />
 }
 
-function AuthenticatedApp() {
-  const [horses, setHorses] = useSupabaseTable('uma_horses', horseMappers)
-  const [cards, setCards] = useSupabaseTable('uma_cards', cardMappers)
-  const [agenda, setAgenda] = useSupabaseTable('uma_agenda', agendaMappers)
-  const [veterans, setVeterans] = useSupabaseTable('uma_veterans', veteranMappers)
+function AuthenticatedApp({ session }) {
+  const isAuthenticated = !!session
+  const [horses, setHorses] = useSupabaseTable('uma_horses', horseMappers, isAuthenticated)
+  const [cards, setCards] = useSupabaseTable('uma_cards', cardMappers, isAuthenticated)
+  const [agenda, setAgenda] = useSupabaseTable('uma_agenda', agendaMappers, isAuthenticated)
+  const [veterans, setVeterans] = useSupabaseTable('uma_veterans', veteranMappers, isAuthenticated)
   const [activeTab, setActiveTab] = useHashTab('Horses')
+  const [showLogin, setShowLogin] = useState(false)
 
   return (
     <>
       <header className="ax-header">
         <div className="ax-header-titles">
           <h1 className="ax-title">uma</h1>
-          <p className="ax-subtitle">Trainee roster, support card library, and race planning for Uma Musume: Pretty Derby</p>
+          <p className="ax-subtitle">
+            Trainee roster, support card library, and race planning for Uma Musume: Pretty Derby
+            {!isAuthenticated && ' — viewing read-only'}
+          </p>
         </div>
         <div className="ax-header-actions">
-          <button className="ax-btn" onClick={() => supabase.auth.signOut()}>Sign out</button>
+          {isAuthenticated ? (
+            <button className="ax-btn" onClick={() => supabase.auth.signOut()}>Sign out</button>
+          ) : (
+            <button className="ax-btn" onClick={() => setShowLogin(true)}>Sign in to edit</button>
+          )}
         </div>
         <div className="ax-tabs-row">
           <div className="ax-tabs-inner">
@@ -104,21 +110,23 @@ function AuthenticatedApp() {
         </div>
       </header>
 
+      {showLogin && !isAuthenticated && <LoginScreen onClose={() => setShowLogin(false)} />}
+
       <main className="page-content">
         <div style={{ display: activeTab === 'Horses' ? 'block' : 'none' }}>
-          <HorsesTab horses={horses} setHorses={setHorses} />
+          <HorsesTab horses={horses} setHorses={setHorses} readOnly={!isAuthenticated} />
         </div>
         <div style={{ display: activeTab === 'Card Library' ? 'block' : 'none' }}>
-          <CardLibraryTab cards={cards} setCards={setCards} />
+          <CardLibraryTab cards={cards} setCards={setCards} readOnly={!isAuthenticated} />
         </div>
         <div style={{ display: activeTab === 'Deck & Race Plan' ? 'block' : 'none' }}>
           <DeckRacePlanTab horses={horses} cards={cards} />
         </div>
         <div style={{ display: activeTab === 'Agenda' ? 'block' : 'none' }}>
-          <AgendaTab agenda={agenda} setAgenda={setAgenda} horses={horses} />
+          <AgendaTab agenda={agenda} setAgenda={setAgenda} horses={horses} readOnly={!isAuthenticated} />
         </div>
         <div style={{ display: activeTab === 'Team Trials' ? 'block' : 'none' }}>
-          <TeamTrialsTab veterans={veterans} setVeterans={setVeterans} horses={horses} cards={cards} />
+          <TeamTrialsTab veterans={veterans} setVeterans={setVeterans} horses={horses} cards={cards} readOnly={!isAuthenticated} />
         </div>
       </main>
     </>

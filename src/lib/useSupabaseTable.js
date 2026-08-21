@@ -4,7 +4,9 @@ import { supabase } from './supabaseClient'
 // Behaves like useState's [value, setValue] pair (functional updates included)
 // so existing components didn't need to change, but every write is diffed
 // against the last-synced snapshot and pushed to Supabase in the background.
-export function useSupabaseTable(table, { fromDb, toDb }) {
+// canWrite gates local writes too (not just the UI) so a stray write attempt
+// while signed out can't desync local state from what RLS actually persists.
+export function useSupabaseTable(table, { fromDb, toDb }, canWrite = true) {
   const [items, setItemsState] = useState([])
   const [loaded, setLoaded] = useState(false)
   const syncedRef = useRef([])
@@ -31,6 +33,10 @@ export function useSupabaseTable(table, { fromDb, toDb }) {
 
   const setItems = useCallback(
     (updater) => {
+      if (!canWrite) {
+        console.warn(`Ignored write to ${table} — not signed in`)
+        return
+      }
       setItemsState((prev) => {
         const next = typeof updater === 'function' ? updater(prev) : updater
         syncToSupabase(table, syncedRef.current, next, toDb)
@@ -38,7 +44,7 @@ export function useSupabaseTable(table, { fromDb, toDb }) {
         return next
       })
     },
-    [table, toDb],
+    [table, toDb, canWrite],
   )
 
   return [items, setItems, loaded]

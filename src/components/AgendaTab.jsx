@@ -3,7 +3,7 @@ import { G1_RACES } from '../lib/races'
 import { isWeakGrade } from '../lib/constants'
 import { makeId } from '../lib/storage'
 
-export default function AgendaTab({ agenda, setAgenda, horses }) {
+export default function AgendaTab({ agenda, setAgenda, horses, readOnly = false }) {
   const [selectedHorseId, setSelectedHorseId] = useState(horses[0]?.id ?? null)
   const selectedHorse = useMemo(() => horses.find((h) => h.id === selectedHorseId) ?? null, [horses, selectedHorseId])
 
@@ -68,7 +68,7 @@ export default function AgendaTab({ agenda, setAgenda, horses }) {
                   const checked = selectedRaceIds.has(race.id)
                   return (
                     <label key={race.id} className={`race-option${checked ? ' is-selected' : ''}`}>
-                      <input type="checkbox" checked={checked} onChange={() => toggleRace(race)} />
+                      <input type="checkbox" checked={checked} onChange={() => toggleRace(race)} disabled={readOnly} />
                       <div className="race-option-info">
                         <div className="text-body" style={{ fontWeight: 600 }}>{race.name}</div>
                         <div className="ax-meta">{race.terrain === 'dirt' ? 'Dirt' : 'Turf'} · {race.distance}m</div>

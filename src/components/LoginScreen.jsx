@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
-export default function LoginScreen() {
+export default function LoginScreen({ onClose }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
@@ -12,15 +12,32 @@ export default function LoginScreen() {
     setLoading(true)
     setError(null)
     const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
-    if (signInError) setError(signInError.message)
+    if (signInError) {
+      setError(signInError.message)
+      setLoading(false)
+      return
+    }
     setLoading(false)
+    onClose?.()
   }
 
   return (
-    <div style={{ maxWidth: 360, margin: '96px auto', padding: '0 20px' }}>
-      <div className="ax-card">
-        <h1 className="ax-title" style={{ marginBottom: 4 }}>uma</h1>
-        <p className="ax-subtitle" style={{ marginBottom: 20 }}>Sign in to access your roster</p>
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        background: 'rgba(82, 46, 56, 0.35)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 20,
+        zIndex: 1000,
+      }}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose?.() }}
+    >
+      <div className="ax-card" style={{ maxWidth: 360, width: '100%' }}>
+        <h1 className="ax-title" style={{ marginBottom: 4 }}>Sign in</h1>
+        <p className="ax-subtitle" style={{ marginBottom: 20 }}>Sign in to edit your roster — viewing never requires it.</p>
         <form onSubmit={handleSubmit}>
           <div className="form-row">
             <label className="label-micro">Email</label>
@@ -46,9 +63,12 @@ export default function LoginScreen() {
           {error && (
             <p className="ax-meta" style={{ color: 'var(--error)', marginBottom: 12 }}>{error}</p>
           )}
-          <button className="ax-btn ax-btn--solid" type="submit" disabled={loading}>
-            {loading ? 'Signing in…' : 'Sign in'}
-          </button>
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button className="ax-btn ax-btn--solid" type="submit" disabled={loading}>
+              {loading ? 'Signing in…' : 'Sign in'}
+            </button>
+            <button className="ax-btn" type="button" onClick={() => onClose?.()}>Cancel</button>
+          </div>
         </form>
       </div>
     </div>

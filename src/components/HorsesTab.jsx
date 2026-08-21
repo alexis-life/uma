@@ -25,7 +25,7 @@ function bestStyle(styleApt) {
   return { styles: best ?? [], grade: GRADES[bestIdx] ?? null }
 }
 
-export default function HorsesTab({ horses, setHorses }) {
+export default function HorsesTab({ horses, setHorses, readOnly = false }) {
   const [selectedId, setSelectedId] = useState(horses[0]?.id ?? null)
   const selected = useMemo(() => horses.find((h) => h.id === selectedId) ?? null, [horses, selectedId])
 
@@ -93,8 +93,12 @@ export default function HorsesTab({ horses, setHorses }) {
   return (
     <div>
       <div className="ax-header-actions" style={{ padding: 0, marginBottom: 20 }}>
-        <button className="ax-btn ax-btn--solid" onClick={addHorse}>+ Add horse</button>
-        <button className="ax-btn" onClick={importTrainees}>Import my trainees</button>
+        {!readOnly && (
+          <>
+            <button className="ax-btn ax-btn--solid" onClick={addHorse}>+ Add horse</button>
+            <button className="ax-btn" onClick={importTrainees}>Import my trainees</button>
+          </>
+        )}
         <span className="ax-meta">{horses.length} in roster</span>
       </div>
 
@@ -131,11 +135,12 @@ export default function HorsesTab({ horses, setHorses }) {
                     type="text"
                     value={selected.name}
                     onChange={(e) => updateSelected({ name: e.target.value })}
+                    disabled={readOnly}
                   />
                 </div>
                 <div className="form-row">
                   <label className="label-micro">Talent rank</label>
-                  <select className="ax-input" value={selected.talentRank ?? DEFAULT_TALENT_RANK} onChange={(e) => updateTalentRank(e.target.value)}>
+                  <select className="ax-input" value={selected.talentRank ?? DEFAULT_TALENT_RANK} onChange={(e) => updateTalentRank(e.target.value)} disabled={readOnly}>
                     {TALENT_RANKS.map((r) => (
                       <option key={r} value={r}>{'★'.repeat(r)} ({r})</option>
                     ))}
@@ -148,7 +153,7 @@ export default function HorsesTab({ horses, setHorses }) {
                 {DISTANCES.map((d) => (
                   <div className="grade-field" key={d}>
                     <label className="label-micro">{d}</label>
-                    <select className="ax-input" value={selected.aptitudes[d]} onChange={(e) => updateAptitude(d, e.target.value)}>
+                    <select className="ax-input" value={selected.aptitudes[d]} onChange={(e) => updateAptitude(d, e.target.value)} disabled={readOnly}>
                       {GRADES.map((g) => (
                         <option key={g} value={g}>{g}</option>
                       ))}
@@ -162,7 +167,7 @@ export default function HorsesTab({ horses, setHorses }) {
                 {STYLES.map((s) => (
                   <div className="grade-field" key={s}>
                     <label className="label-micro">{STYLE_LABELS[s]}</label>
-                    <select className="ax-input" value={selected.styleApt[s]} onChange={(e) => updateStyleApt(s, e.target.value)}>
+                    <select className="ax-input" value={selected.styleApt[s]} onChange={(e) => updateStyleApt(s, e.target.value)} disabled={readOnly}>
                       {GRADES.map((g) => (
                         <option key={g} value={g}>{g}</option>
                       ))}
@@ -175,7 +180,7 @@ export default function HorsesTab({ horses, setHorses }) {
                 Best style: {bestStyle(selected.styleApt).styles.map((s) => STYLE_LABELS[s]).join(' / ')} ({bestStyle(selected.styleApt).grade})
               </div>
 
-              <button className="ax-btn" onClick={removeSelected}>Remove horse</button>
+              {!readOnly && <button className="ax-btn" onClick={removeSelected}>Remove horse</button>}
             </>
           )}
         </div>

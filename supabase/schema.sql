@@ -53,16 +53,25 @@ alter table uma_cards enable row level security;
 alter table uma_agenda enable row level security;
 alter table uma_veterans enable row level security;
 
--- Single-user app: any authenticated session (there will only ever be the
--- one account you create) gets full read/write access.
-create policy "uma_horses_authenticated_all" on uma_horses
-  for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
+-- Public can read everything (viewing the roster needs no login); only an
+-- authenticated session (there will only ever be the one account you
+-- create) can write.
+create policy "uma_horses_public_read" on uma_horses for select using (true);
+create policy "uma_horses_authenticated_insert" on uma_horses for insert with check (auth.role() = 'authenticated');
+create policy "uma_horses_authenticated_update" on uma_horses for update using (auth.role() = 'authenticated');
+create policy "uma_horses_authenticated_delete" on uma_horses for delete using (auth.role() = 'authenticated');
 
-create policy "uma_cards_authenticated_all" on uma_cards
-  for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
+create policy "uma_cards_public_read" on uma_cards for select using (true);
+create policy "uma_cards_authenticated_insert" on uma_cards for insert with check (auth.role() = 'authenticated');
+create policy "uma_cards_authenticated_update" on uma_cards for update using (auth.role() = 'authenticated');
+create policy "uma_cards_authenticated_delete" on uma_cards for delete using (auth.role() = 'authenticated');
 
-create policy "uma_agenda_authenticated_all" on uma_agenda
-  for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
+create policy "uma_agenda_public_read" on uma_agenda for select using (true);
+create policy "uma_agenda_authenticated_insert" on uma_agenda for insert with check (auth.role() = 'authenticated');
+create policy "uma_agenda_authenticated_update" on uma_agenda for update using (auth.role() = 'authenticated');
+create policy "uma_agenda_authenticated_delete" on uma_agenda for delete using (auth.role() = 'authenticated');
 
-create policy "uma_veterans_authenticated_all" on uma_veterans
-  for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
+create policy "uma_veterans_public_read" on uma_veterans for select using (true);
+create policy "uma_veterans_authenticated_insert" on uma_veterans for insert with check (auth.role() = 'authenticated');
+create policy "uma_veterans_authenticated_update" on uma_veterans for update using (auth.role() = 'authenticated');
+create policy "uma_veterans_authenticated_delete" on uma_veterans for delete using (auth.role() = 'authenticated');

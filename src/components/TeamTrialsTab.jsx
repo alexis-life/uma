@@ -20,7 +20,7 @@ function emptyDraft(distanceCategory) {
   }
 }
 
-export default function TeamTrialsTab({ veterans, setVeterans, horses, cards }) {
+export default function TeamTrialsTab({ veterans, setVeterans, horses, cards, readOnly = false }) {
   const [draft, setDraft] = useState(null)
 
   const ownedCardNames = cards.map((c) => c.name)
@@ -113,7 +113,9 @@ export default function TeamTrialsTab({ veterans, setVeterans, horses, cards }) 
               {Array.from({ length: SLOT_COUNT }).map((_, i) => {
                 const veteran = list[i]
                 if (!veteran) {
-                  return (
+                  return readOnly ? (
+                    <div key={i} className="tt-slot tt-slot--empty">Empty</div>
+                  ) : (
                     <button key={i} className="tt-slot tt-slot--empty" onClick={() => openAdd(distance)}>
                       + Add veteran
                     </button>
@@ -146,7 +148,7 @@ export default function TeamTrialsTab({ veterans, setVeterans, horses, cards }) 
           <div className="form-grid-2">
             <div className="form-row">
               <label className="label-micro">Link to a horse (optional)</label>
-              <select className="ax-input" value={draft.horseId} onChange={(e) => pickHorse(e.target.value)}>
+              <select className="ax-input" value={draft.horseId} onChange={(e) => pickHorse(e.target.value)} disabled={readOnly}>
                 <option value="">— none —</option>
                 {horses.map((h) => (
                   <option key={h.id} value={h.id}>{h.name}</option>
@@ -160,6 +162,7 @@ export default function TeamTrialsTab({ veterans, setVeterans, horses, cards }) 
                 type="text"
                 value={draft.name}
                 onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))}
+                disabled={readOnly}
               />
             </div>
           </div>
@@ -167,7 +170,7 @@ export default function TeamTrialsTab({ veterans, setVeterans, horses, cards }) 
           <div className="form-grid-2">
             <div className="form-row">
               <label className="label-micro">Running style</label>
-              <select className="ax-input" value={draft.style} onChange={(e) => setDraft((d) => ({ ...d, style: e.target.value }))}>
+              <select className="ax-input" value={draft.style} onChange={(e) => setDraft((d) => ({ ...d, style: e.target.value }))} disabled={readOnly}>
                 {STYLES.map((s) => (
                   <option key={s} value={s}>{STYLE_LABELS[s]}</option>
                 ))}
@@ -175,7 +178,7 @@ export default function TeamTrialsTab({ veterans, setVeterans, horses, cards }) 
             </div>
             <div className="form-row">
               <label className="label-micro">Distance category</label>
-              <select className="ax-input" value={draft.distanceCategory} onChange={(e) => setDraft((d) => ({ ...d, distanceCategory: e.target.value }))}>
+              <select className="ax-input" value={draft.distanceCategory} onChange={(e) => setDraft((d) => ({ ...d, distanceCategory: e.target.value }))} disabled={readOnly}>
                 {DISTANCES.map((d) => (
                   <option key={d} value={d}>{d}</option>
                 ))}
@@ -186,7 +189,7 @@ export default function TeamTrialsTab({ veterans, setVeterans, horses, cards }) 
           <div className="form-grid-2">
             <div className="form-row">
               <label className="label-micro">{draft.distanceCategory} aptitude (trained)</label>
-              <select className="ax-input" value={draft.distanceGrade} onChange={(e) => setDraft((d) => ({ ...d, distanceGrade: e.target.value }))}>
+              <select className="ax-input" value={draft.distanceGrade} onChange={(e) => setDraft((d) => ({ ...d, distanceGrade: e.target.value }))} disabled={readOnly}>
                 {GRADES.map((g) => (
                   <option key={g} value={g}>{g}</option>
                 ))}
@@ -194,7 +197,7 @@ export default function TeamTrialsTab({ veterans, setVeterans, horses, cards }) 
             </div>
             <div className="form-row">
               <label className="label-micro">{STYLE_LABELS[draft.style]} aptitude (trained)</label>
-              <select className="ax-input" value={draft.styleGrade} onChange={(e) => setDraft((d) => ({ ...d, styleGrade: e.target.value }))}>
+              <select className="ax-input" value={draft.styleGrade} onChange={(e) => setDraft((d) => ({ ...d, styleGrade: e.target.value }))} disabled={readOnly}>
                 {GRADES.map((g) => (
                   <option key={g} value={g}>{g}</option>
                 ))}
@@ -204,11 +207,11 @@ export default function TeamTrialsTab({ veterans, setVeterans, horses, cards }) 
 
           <div style={{ display: 'flex', gap: 20, marginBottom: 16, flexWrap: 'wrap' }}>
             <label className="ax-chip" style={{ cursor: 'pointer' }}>
-              <input type="checkbox" checked={draft.isAce} onChange={(e) => setDraft((d) => ({ ...d, isAce: e.target.checked }))} style={{ marginRight: 6 }} />
+              <input type="checkbox" checked={draft.isAce} onChange={(e) => setDraft((d) => ({ ...d, isAce: e.target.checked }))} style={{ marginRight: 6 }} disabled={readOnly} />
               Ace (top slot, +10% score)
             </label>
             <label className="ax-chip" style={{ cursor: 'pointer' }}>
-              <input type="checkbox" checked={draft.reliableUnique} onChange={(e) => setDraft((d) => ({ ...d, reliableUnique: e.target.checked }))} style={{ marginRight: 6 }} />
+              <input type="checkbox" checked={draft.reliableUnique} onChange={(e) => setDraft((d) => ({ ...d, reliableUnique: e.target.checked }))} style={{ marginRight: 6 }} disabled={readOnly} />
               Reliable Unique activation
             </label>
           </div>
@@ -221,13 +224,14 @@ export default function TeamTrialsTab({ veterans, setVeterans, horses, cards }) 
               value={draft.notes}
               onChange={(e) => setDraft((d) => ({ ...d, notes: e.target.value }))}
               placeholder="Inherited unique, stamina recovery, etc."
+              disabled={readOnly}
             />
           </div>
 
           <div style={{ display: 'flex', gap: 10 }}>
-            <button className="ax-btn ax-btn--solid" onClick={saveDraft}>Save</button>
-            <button className="ax-btn" onClick={closeDraft}>Cancel</button>
-            {draft.id && <button className="ax-btn" onClick={removeDraft}>Remove</button>}
+            {!readOnly && <button className="ax-btn ax-btn--solid" onClick={saveDraft}>Save</button>}
+            <button className="ax-btn" onClick={closeDraft}>{readOnly ? 'Close' : 'Cancel'}</button>
+            {!readOnly && draft.id && <button className="ax-btn" onClick={removeDraft}>Remove</button>}
           </div>
         </div>
       )}
