@@ -173,7 +173,7 @@ export default function HorsesTab({ horses, setHorses, readOnly = false }) {
         <div className="ax-card"><div className="ax-empty">No horses yet. Add one or import your trainees.</div></div>
       ) : (
         <div className="horse-gallery" style={{ marginBottom: 20 }}>
-          {horses.map((h) => (
+          {[...horses].sort((a, b) => a.name.localeCompare(b.name)).map((h) => (
             <button
               key={h.id}
               className={`horse-tile${h.id === selectedId ? ' is-active' : ''}`}
