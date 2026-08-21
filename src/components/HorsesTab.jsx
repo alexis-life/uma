@@ -32,11 +32,25 @@ function charArtUrl(cardId) {
   return `https://gametora.com/images/umamusume/characters/thumb/chara_stand_${charId}_${cardId}.png`
 }
 
+const SORT_OPTIONS = {
+  name: { label: 'Name', compare: (a, b) => a.name.localeCompare(b.name) },
+  talentRank: { label: 'Talent rank (highest first)', compare: (a, b) => (b.talentRank ?? DEFAULT_TALENT_RANK) - (a.talentRank ?? DEFAULT_TALENT_RANK) || a.name.localeCompare(b.name) },
+}
+
 export default function HorsesTab({ horses, setHorses, readOnly = false }) {
   const [selectedId, setSelectedId] = useState(horses[0]?.id ?? null)
   const selected = useMemo(() => horses.find((h) => h.id === selectedId) ?? null, [horses, selectedId])
   const [gtText, setGtText] = useState('')
   const [gtResult, setGtResult] = useState(null)
+  const [search, setSearch] = useState('')
+  const [sortBy, setSortBy] = useState('name')
+
+  const visibleHorses = useMemo(() => {
+    const q = search.trim().toLowerCase()
+    return horses
+      .filter((h) => !q || h.name.toLowerCase().includes(q))
+      .sort(SORT_OPTIONS[sortBy].compare)
+  }, [horses, search, sortBy])
 
   function addHorse() {
     const horse = {
@@ -161,11 +175,31 @@ export default function HorsesTab({ horses, setHorses, readOnly = false }) {
         </div>
       )}
 
+      <h3 className="section-heading">All horses ({visibleHorses.length}{visibleHorses.length !== horses.length ? ` of ${horses.length}` : ''})</h3>
       {horses.length === 0 ? (
         <div className="ax-card"><div className="ax-empty">No horses yet. Add one or import your trainees.</div></div>
       ) : (
+        <>
+          <div className="filter-bar">
+            <input
+              className="ax-input"
+              type="text"
+              placeholder="Search by name…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              style={{ flex: '1 1 200px' }}
+            />
+            <select className="ax-input" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+              {Object.entries(SORT_OPTIONS).map(([key, { label }]) => (
+                <option key={key} value={key}>Sort: {label}</option>
+              ))}
+            </select>
+          </div>
+          {visibleHorses.length === 0 ? (
+            <div className="ax-card"><div className="ax-empty">No horses match this filter.</div></div>
+          ) : (
         <div className="horse-gallery" style={{ marginBottom: 20 }}>
-          {[...horses].sort((a, b) => a.name.localeCompare(b.name)).map((h) => (
+          {visibleHorses.map((h) => (
             <button
               key={h.id}
               className={`horse-tile${h.id === selectedId ? ' is-active' : ''}`}
@@ -186,6 +220,8 @@ export default function HorsesTab({ horses, setHorses, readOnly = false }) {
             </button>
           ))}
         </div>
+          )}
+        </>
       )}
 
       <div className="horses-layout">

@@ -153,7 +153,7 @@ export default function TeamTrialsTab({ veterans, setVeterans, horses, cards, re
               <label className="label-micro">Link to a horse (optional)</label>
               <select className="ax-input" value={draft.horseId} onChange={(e) => pickHorse(e.target.value)} disabled={readOnly}>
                 <option value="">— none —</option>
-                {horses.map((h) => (
+                {[...horses].sort((a, b) => a.name.localeCompare(b.name)).map((h) => (
                   <option key={h.id} value={h.id}>{h.name}</option>
                 ))}
               </select>
@@ -170,7 +170,15 @@ export default function TeamTrialsTab({ veterans, setVeterans, horses, cards, re
             </div>
           </div>
 
-          <div className="form-grid-2">
+          <div className="form-grid-3">
+            <div className="form-row">
+              <label className="label-micro">Track type</label>
+              <select className="ax-input" value={draft.trackType} onChange={(e) => setDraft((d) => ({ ...d, trackType: e.target.value }))} disabled={readOnly}>
+                {TRACK_TYPES.map((t) => (
+                  <option key={t} value={t}>{t}</option>
+                ))}
+              </select>
+            </div>
             <div className="form-row">
               <label className="label-micro">Running style</label>
               <select className="ax-input" value={draft.style} onChange={(e) => setDraft((d) => ({ ...d, style: e.target.value }))} disabled={readOnly}>
@@ -189,10 +197,10 @@ export default function TeamTrialsTab({ veterans, setVeterans, horses, cards, re
             </div>
           </div>
 
-          <div className="form-grid-2">
+          <div className="form-grid-3">
             <div className="form-row">
-              <label className="label-micro">{draft.distanceCategory} aptitude (trained)</label>
-              <select className="ax-input" value={draft.distanceGrade} onChange={(e) => setDraft((d) => ({ ...d, distanceGrade: e.target.value }))} disabled={readOnly}>
+              <label className="label-micro">{draft.trackType} aptitude (trained)</label>
+              <select className="ax-input" value={draft.trackGrade} onChange={(e) => setDraft((d) => ({ ...d, trackGrade: e.target.value }))} disabled={readOnly}>
                 {GRADES.map((g) => (
                   <option key={g} value={g}>{g}</option>
                 ))}
@@ -206,20 +214,9 @@ export default function TeamTrialsTab({ veterans, setVeterans, horses, cards, re
                 ))}
               </select>
             </div>
-          </div>
-
-          <div className="form-grid-2">
             <div className="form-row">
-              <label className="label-micro">Track type</label>
-              <select className="ax-input" value={draft.trackType} onChange={(e) => setDraft((d) => ({ ...d, trackType: e.target.value }))} disabled={readOnly}>
-                {TRACK_TYPES.map((t) => (
-                  <option key={t} value={t}>{t}</option>
-                ))}
-              </select>
-            </div>
-            <div className="form-row">
-              <label className="label-micro">{draft.trackType} aptitude (trained)</label>
-              <select className="ax-input" value={draft.trackGrade} onChange={(e) => setDraft((d) => ({ ...d, trackGrade: e.target.value }))} disabled={readOnly}>
+              <label className="label-micro">{draft.distanceCategory} aptitude (trained)</label>
+              <select className="ax-input" value={draft.distanceGrade} onChange={(e) => setDraft((d) => ({ ...d, distanceGrade: e.target.value }))} disabled={readOnly}>
                 {GRADES.map((g) => (
                   <option key={g} value={g}>{g}</option>
                 ))}

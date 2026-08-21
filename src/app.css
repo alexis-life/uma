@@ -123,9 +123,28 @@
   margin-bottom: 20px;
 }
 
+.form-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
 /* ── Shared table wrapper (Team Trials meta table) ──── */
 .card-table-wrap {
   overflow-x: auto;
+}
+
+/* ── Shared filter/sort bar (Card Library, Horses) ──── */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.filter-bar .ax-input {
+  width: auto;
 }
 
 /* ── Card Library tab — poster grid ─────────────────── */

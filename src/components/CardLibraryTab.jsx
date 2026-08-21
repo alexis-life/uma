@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { CARD_TYPES, RARITIES, LIMIT_BREAKS } from '../lib/constants'
+import { useState, useMemo } from 'react'
+import { CARD_TYPES, RARITIES, RARITY_ORDER, LIMIT_BREAKS } from '../lib/constants'
 import { makeId } from '../lib/storage'
 import { SEED_CARDS, buildSeedCards } from '../lib/seedCards'
 import { parseGametoraCollection, resolveSupports } from '../lib/gametoraImport'
@@ -29,10 +29,30 @@ function cardArtUrl(supportId) {
   return `https://media.gametora.com/umamusume/supports/full/small/${supportId}.png`
 }
 
+const SORT_OPTIONS = {
+  name: { label: 'Name', compare: (a, b) => a.name.localeCompare(b.name) },
+  rarity: { label: 'Rarity (highest first)', compare: (a, b) => RARITY_ORDER[b.rarity] - RARITY_ORDER[a.rarity] || a.name.localeCompare(b.name) },
+  type: { label: 'Type', compare: (a, b) => a.type.localeCompare(b.type) || a.name.localeCompare(b.name) },
+  limitBreak: { label: 'Limit break (highest first)', compare: (a, b) => b.limitBreak - a.limitBreak || a.name.localeCompare(b.name) },
+}
+
 export default function CardLibraryTab({ cards, setCards, readOnly = false }) {
   const [pasteText, setPasteText] = useState('')
   const [gtText, setGtText] = useState('')
   const [gtResult, setGtResult] = useState(null)
+  const [search, setSearch] = useState('')
+  const [typeFilter, setTypeFilter] = useState('')
+  const [rarityFilter, setRarityFilter] = useState('')
+  const [sortBy, setSortBy] = useState('name')
+
+  const visibleCards = useMemo(() => {
+    const q = search.trim().toLowerCase()
+    return cards
+      .filter((c) => (!q || c.name.toLowerCase().includes(q)))
+      .filter((c) => (!typeFilter || c.type === typeFilter))
+      .filter((c) => (!rarityFilter || c.rarity === rarityFilter))
+      .sort(SORT_OPTIONS[sortBy].compare)
+  }, [cards, search, typeFilter, rarityFilter, sortBy])
 
   function importSeedCards() {
     const existingNames = new Set(cards.map((c) => c.name))
@@ -150,12 +170,43 @@ export default function CardLibraryTab({ cards, setCards, readOnly = false }) {
         </>
       )}
 
-      <h3 className="section-heading">All cards ({cards.length})</h3>
+      <h3 className="section-heading">All cards ({visibleCards.length}{visibleCards.length !== cards.length ? ` of ${cards.length}` : ''})</h3>
       {cards.length === 0 ? (
         <div className="ax-card"><div className="ax-empty">No cards yet.{!readOnly && ' Import my cards or paste a GameTora export to get started.'}</div></div>
       ) : (
+        <>
+          <div className="filter-bar">
+            <input
+              className="ax-input"
+              type="text"
+              placeholder="Search by name…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              style={{ flex: '1 1 200px' }}
+            />
+            <select className="ax-input" value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
+              <option value="">All types</option>
+              {CARD_TYPES.map((t) => (
+                <option key={t} value={t}>{typeLabel(t)}</option>
+              ))}
+            </select>
+            <select className="ax-input" value={rarityFilter} onChange={(e) => setRarityFilter(e.target.value)}>
+              <option value="">All rarities</option>
+              {RARITIES.map((r) => (
+                <option key={r} value={r}>{r}</option>
+              ))}
+            </select>
+            <select className="ax-input" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+              {Object.entries(SORT_OPTIONS).map(([key, { label }]) => (
+                <option key={key} value={key}>Sort: {label}</option>
+              ))}
+            </select>
+          </div>
+          {visibleCards.length === 0 ? (
+            <div className="ax-card"><div className="ax-empty">No cards match this filter.</div></div>
+          ) : (
         <div className="card-grid">
-          {[...cards].sort((a, b) => a.name.localeCompare(b.name)).map((c) => {
+          {visibleCards.map((c) => {
             const { charName, title } = parseCardName(c.name)
             return (
               <div className={`card-poster card-poster--${c.rarity}`} key={c.id}>
@@ -217,6 +268,8 @@ export default function CardLibraryTab({ cards, setCards, readOnly = false }) {
             )
           })}
         </div>
+          )}
+        </>
       )}
     </div>
   )
