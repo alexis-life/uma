@@ -4,6 +4,25 @@
   padding: 24px var(--content-pad) 48px;
 }
 
+/* ── Header sign-in/out — pinned top-right of the title row, ─
+   like cysa.alexischao.com, instead of stacked below it ────── */
+.ax-header { position: relative; }
+
+.ax-header-actions {
+  position: absolute;
+  top: 24px;
+  right: var(--content-pad);
+  padding: 0;
+  z-index: 2;
+}
+
+@media (max-width: 640px) {
+  .ax-header-actions {
+    position: static;
+    padding: 0 16px 14px;
+  }
+}
+
 /* ── Horses tab ────────────────────────────────────── */
 .horses-layout {
   display: grid;
