@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import { DISTANCES, STYLES, STYLE_LABELS, GRADES, TALENT_RANKS, DEFAULT_TALENT_RANK, gradeIndex, defaultAptitudes, defaultStyleApt } from '../lib/constants'
 import { makeId } from '../lib/storage'
 import { buildTraineeRoster, TRAINEE_APTITUDES } from '../lib/seedHorses'
+import { parseGametoraCollection, resolveCharCards } from '../lib/gametoraImport'
 
 function isUntouchedDefault(horse) {
   return (
@@ -25,15 +26,24 @@ function bestStyle(styleApt) {
   return { styles: best ?? [], grade: GRADES[bestIdx] ?? null }
 }
 
+function charArtUrl(cardId) {
+  if (!cardId) return null
+  const charId = Math.floor(cardId / 100)
+  return `https://gametora.com/images/umamusume/characters/thumb/chara_stand_${charId}_${cardId}.png`
+}
+
 export default function HorsesTab({ horses, setHorses, readOnly = false }) {
   const [selectedId, setSelectedId] = useState(horses[0]?.id ?? null)
   const selected = useMemo(() => horses.find((h) => h.id === selectedId) ?? null, [horses, selectedId])
+  const [gtText, setGtText] = useState('')
+  const [gtResult, setGtResult] = useState(null)
 
   function addHorse() {
     const horse = {
       id: makeId(),
       name: 'New Trainee',
       talentRank: DEFAULT_TALENT_RANK,
+      cardId: null,
       aptitudes: defaultAptitudes('B'),
       styleApt: defaultStyleApt('B'),
     }
@@ -45,11 +55,9 @@ export default function HorsesTab({ horses, setHorses, readOnly = false }) {
     const existingNames = new Set(horses.map((h) => h.name))
     const toAdd = buildTraineeRoster().filter((h) => !existingNames.has(h.name))
 
-    // Horses already in the roster with untouched default (all-B) grades or
-    // an unset talent rank get upgraded to real data too — anything manually
-    // edited away from the default is left alone. None of the real talent
-    // ranks are ever 1, so a horse still sitting at the default 1★ is always
-    // safe to backfill.
+    // Horses already in the roster with untouched default (all-B) grades, an
+    // unset talent rank, or a missing cardId get upgraded/backfilled too —
+    // anything manually edited away from the default is left alone.
     setHorses((prev) =>
       prev.map((h) => {
         const real = TRAINEE_APTITUDES[h.name]
@@ -62,10 +70,42 @@ export default function HorsesTab({ horses, setHorses, readOnly = false }) {
         if ((h.talentRank ?? DEFAULT_TALENT_RANK) === DEFAULT_TALENT_RANK) {
           patch.talentRank = real.talentRank
         }
+        if (!h.cardId && real.cardId) {
+          patch.cardId = real.cardId
+        }
         return Object.keys(patch).length > 0 ? { ...h, ...patch } : h
       }).concat(toAdd),
     )
     if (toAdd.length > 0) setSelectedId((prev) => prev ?? toAdd[0].id)
+  }
+
+  function importGametoraExport() {
+    let en
+    try {
+      en = parseGametoraCollection(gtText)
+    } catch (err) {
+      setGtResult({ error: err.message })
+      return
+    }
+    const { resolved, unresolved } = resolveCharCards(en)
+    let added = 0
+    let updated = 0
+    setHorses((prev) => {
+      const next = [...prev]
+      for (const r of resolved) {
+        const idx = next.findIndex((h) => h.cardId === r.cardId || h.name === r.name)
+        if (idx === -1) {
+          next.push({ id: makeId(), name: r.name, talentRank: r.talentRank, cardId: r.cardId, aptitudes: r.aptitudes, styleApt: r.styleApt })
+          added++
+        } else {
+          next[idx] = { ...next[idx], cardId: r.cardId, talentRank: r.talentRank, aptitudes: r.aptitudes, styleApt: r.styleApt }
+          updated++
+        }
+      }
+      return next
+    })
+    setGtResult({ added, updated, unresolved: unresolved.length })
+    setGtText('')
   }
 
   function updateSelected(patch) {
@@ -101,6 +141,33 @@ export default function HorsesTab({ horses, setHorses, readOnly = false }) {
         )}
         <span className="ax-meta">{horses.length} in roster</span>
       </div>
+
+      {!readOnly && (
+        <div className="ax-card" style={{ marginBottom: 20 }}>
+          <h3 style={{ marginBottom: 6 }}>Update from GameTora export</h3>
+          <p className="ax-meta" style={{ marginBottom: 10 }}>
+            Paste a fresh GameTora collection export to add new trainees and refresh trained aptitude/talent rank for
+            existing ones by their card ID — safe to re-run any time you pull.
+          </p>
+          <textarea
+            className="ax-input"
+            style={{ width: '100%', minHeight: 70, borderRadius: 'var(--radius-md)', resize: 'vertical' }}
+            placeholder='{"app":"gametora","game":"umamusume","type":"collection",...}'
+            value={gtText}
+            onChange={(e) => setGtText(e.target.value)}
+          />
+          <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+            <button className="ax-btn ax-btn--solid" onClick={importGametoraExport} disabled={!gtText.trim()}>Import export</button>
+            {gtResult && (
+              <span className="ax-meta">
+                {gtResult.error
+                  ? gtResult.error
+                  : `Added ${gtResult.added}, updated ${gtResult.updated}${gtResult.unresolved ? `, ${gtResult.unresolved} not recognized yet` : ''}.`}
+              </span>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="horses-layout">
         <div className="ax-card" style={{ padding: 12 }}>
@@ -147,6 +214,15 @@ export default function HorsesTab({ horses, setHorses, readOnly = false }) {
                   </select>
                 </div>
               </div>
+
+              {charArtUrl(selected.cardId) && (
+                <img
+                  src={charArtUrl(selected.cardId)}
+                  alt={selected.name}
+                  className="horse-art"
+                  onError={(e) => { e.currentTarget.style.display = 'none' }}
+                />
+              )}
 
               <h3 style={{ marginBottom: 10 }}>Distance aptitude</h3>
               <div className="grade-grid" style={{ marginBottom: 20 }}>

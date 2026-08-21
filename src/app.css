@@ -34,6 +34,16 @@
   align-items: start;
 }
 
+.horse-art {
+  display: block;
+  max-width: 200px;
+  max-height: 240px;
+  width: auto;
+  height: auto;
+  border-radius: var(--radius-md);
+  margin-bottom: 20px;
+}
+
 .horse-list {
   display: flex;
   flex-direction: column;
@@ -94,29 +104,16 @@
 }
 
 /* ── Card Library tab ──────────────────────────────── */
-.quick-add-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 10px;
-}
-
-.quick-add-tile {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  background: var(--bg-surface);
-  border: 1px solid var(--c2);
-  border-radius: var(--radius-md);
-  padding: 10px 8px;
-  cursor: pointer;
-  font-family: 'Poppins', sans-serif;
-}
-
-.quick-add-tile:hover { border-color: var(--c6); background: var(--bg-hover); }
-
 .card-table-wrap {
   overflow-x: auto;
+}
+
+.card-art-thumb {
+  display: block;
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
 }
 
 /* ── Deck & Race Plan tab ──────────────────────────── */
@@ -139,6 +136,15 @@
   border-radius: var(--radius-md);
   padding: 12px;
   text-align: center;
+}
+
+.deck-slot-art {
+  display: block;
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  margin: 0 auto 8px;
 }
 
 .skill-list {

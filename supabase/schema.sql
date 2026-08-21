@@ -8,6 +8,7 @@ create table if not exists uma_horses (
   talent_rank integer not null default 1,
   aptitudes jsonb not null default '{}'::jsonb,
   style_apt jsonb not null default '{}'::jsonb,
+  card_id integer,
   created_at timestamptz not null default now()
 );
 
@@ -17,6 +18,7 @@ create table if not exists uma_cards (
   type text not null,
   rarity text not null,
   limit_break integer not null default 0,
+  support_id integer,
   created_at timestamptz not null default now()
 );
 

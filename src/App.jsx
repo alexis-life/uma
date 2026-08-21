@@ -13,13 +13,13 @@ import TeamTrialsTab from './components/TeamTrialsTab'
 const TABS = ['Horses', 'Card Library', 'Deck & Race Plan', 'Agenda', 'Team Trials']
 
 const horseMappers = {
-  fromDb: (row) => ({ id: row.id, name: row.name, talentRank: row.talent_rank, aptitudes: row.aptitudes, styleApt: row.style_apt }),
-  toDb: (item) => ({ id: item.id, name: item.name, talent_rank: item.talentRank, aptitudes: item.aptitudes, style_apt: item.styleApt }),
+  fromDb: (row) => ({ id: row.id, name: row.name, talentRank: row.talent_rank, aptitudes: row.aptitudes, styleApt: row.style_apt, cardId: row.card_id }),
+  toDb: (item) => ({ id: item.id, name: item.name, talent_rank: item.talentRank, aptitudes: item.aptitudes, style_apt: item.styleApt, card_id: item.cardId ?? null }),
 }
 
 const cardMappers = {
-  fromDb: (row) => ({ id: row.id, name: row.name, type: row.type, rarity: row.rarity, limitBreak: row.limit_break }),
-  toDb: (item) => ({ id: item.id, name: item.name, type: item.type, rarity: item.rarity, limit_break: item.limitBreak }),
+  fromDb: (row) => ({ id: row.id, name: row.name, type: row.type, rarity: row.rarity, limitBreak: row.limit_break, supportId: row.support_id }),
+  toDb: (item) => ({ id: item.id, name: item.name, type: item.type, rarity: item.rarity, limit_break: item.limitBreak, support_id: item.supportId ?? null }),
 }
 
 const agendaMappers = {

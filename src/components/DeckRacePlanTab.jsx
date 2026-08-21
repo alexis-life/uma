@@ -3,6 +3,11 @@ import { DISTANCES, STYLES, STYLE_LABELS, isWeakGrade } from '../lib/constants'
 import { recommendDeck } from '../lib/deckLogic'
 import { RACE_PLANS, SKILL_PRIORITIES } from '../lib/racePlans'
 
+function cardArtUrl(supportId) {
+  if (!supportId) return null
+  return `https://gametora.com/images/umamusume/supports/support_card_s_${supportId}.png`
+}
+
 export default function DeckRacePlanTab({ horses, cards }) {
   const [horseId, setHorseId] = useState(horses[0]?.id ?? '')
   const [style, setStyle] = useState('Nige')
@@ -94,6 +99,14 @@ export default function DeckRacePlanTab({ horses, cards }) {
         <div className="deck-grid">
           {deck.map((c) => (
             <div className="deck-slot" key={c.id}>
+              {cardArtUrl(c.supportId) && (
+                <img
+                  src={cardArtUrl(c.supportId)}
+                  alt=""
+                  className="deck-slot-art"
+                  onError={(e) => { e.currentTarget.style.display = 'none' }}
+                />
+              )}
               <div className="ax-badge" style={{ marginBottom: 6 }}>{c.rarity}</div>
               <div className="text-body" style={{ fontWeight: 600 }}>{c.name}</div>
               <div className="ax-meta">{c.type} · LB{c.limitBreak}</div>
