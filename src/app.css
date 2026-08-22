@@ -45,8 +45,8 @@
 
 .horse-gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 16px;
 }
 
 .horse-tile {
@@ -81,8 +81,8 @@
 }
 
 .horse-tile-name {
-  font-size: 0.72rem;
-  font-weight: 600;
+  font-size: 0.8rem;
+  font-weight: 700;
   color: var(--c9);
   line-height: 1.25;
 }

@@ -29,7 +29,7 @@ function bestStyle(styleApt) {
 function charArtUrl(cardId) {
   if (!cardId) return null
   const charId = Math.floor(cardId / 100)
-  return `https://gametora.com/images/umamusume/characters/thumb/chara_stand_${charId}_${cardId}.png`
+  return `https://gametora.com/images/umamusume/characters/chara_stand_${charId}_${cardId}.png`
 }
 
 const SORT_OPTIONS = {
