@@ -87,7 +87,7 @@ export const META_VETERAN_PICKS = [
       { style: 'Late Surger', name: 'Grass Wonder', note: 'Natural Mile A; consistent unique, good low-investment pick.' },
     ],
     whale: [
-      { style: 'Front Runner', name: 'Maruzensky (Summer)', note: 'Consistent unique with a reliable recovery skill.' },
+      { style: 'Front Runner', name: 'Maruzensky [Hot☆Summer Night]', note: 'Consistent unique with a reliable recovery skill.' },
       { style: 'Pace Chaser', name: 'Fuji Kiseki', note: 'Or Taiki Shuttle — Taiki leans more Dirt-relevant overall.' },
       { style: 'Late Surger', name: 'Vodka', note: 'Same as core pick — she holds her spot even at whale investment.' },
     ],
@@ -102,7 +102,7 @@ export const META_VETERAN_PICKS = [
     whale: [
       { style: 'Front Runner', name: 'Mihono Bourbon', note: 'Innate skills + unique carry her once built, but career difficulty is high.' },
       { style: 'Pace Chaser', name: 'Agnes Tachyon', note: 'Still BiS — no whale-tier swap needed.' },
-      { style: 'Late Surger', name: 'Mayano Top Gun (Wedding)', note: 'Contender for best TT Uma overall; semi-consistent Fast Learner access.' },
+      { style: 'Late Surger', name: 'Mayano Top Gun [Sunlight Bouquet]', note: 'Contender for best TT Uma overall; semi-consistent Fast Learner access.' },
     ],
   },
   {
@@ -114,7 +114,7 @@ export const META_VETERAN_PICKS = [
     ],
     whale: [
       { style: 'Pace Chaser', name: 'Super Creek', note: 'Stays — no better alternative even at whale investment.' },
-      { style: 'Front Runner or Late Surger', name: 'T.M. Opera O (New Year)', note: 'Very consistent unique; more optimal as Front Runner despite a native C aptitude there.' },
+      { style: 'Front Runner or Late Surger', name: 'TM Opera O [New Year, Same Radiance!]', note: 'Very consistent unique; more optimal as Front Runner despite a native C aptitude there.' },
       { style: 'End Closer', name: 'Gold Ship', note: 'Stays — remains BiS.' },
     ],
   },
@@ -126,7 +126,7 @@ export const META_VETERAN_PICKS = [
     ],
     whale: [
       { style: 'Front Runner', name: 'Smart Falcon', note: 'BiS Front Runner/Dirt — raise Turf aptitude to at least C for easier career fan/SP gain.' },
-      { style: 'Late Surger', name: 'Haru Urara (New Year)', note: 'Comes with native Mile A, no longer needs the Mile spark her original outfit does.' },
+      { style: 'Late Surger', name: 'Haru Urara [New Year ♪ New Urara!]', note: 'Comes with native Mile A, no longer needs the Mile spark her original outfit does.' },
       { style: 'End Closer', name: 'Agnes Digital', note: 'Needs one End spark (B→A); very consistent kit.' },
     ],
   },

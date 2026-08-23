@@ -1,73 +1,37 @@
 import { defaultAptitudes, defaultStyleApt, DEFAULT_TALENT_RANK } from './constants'
 import { makeId } from './storage'
+import { GAMETORA_CHARACTERS } from './gametoraCharacterDb'
 
-export const TRAINEE_NAMES = [
-  'Agnes Tachyon', 'Air Groove', 'Air Groove (Wedding)', 'Biwa Hayahide (Christmas)', 'Curren Chan', 'Daiwa Scarlet',
-  'Eishin Flash (Valentine)', 'El Condor Pasa', 'Fuji Kiseki', 'Fuji Kiseki (Ballroom)', 'Gold City', 'Gold City (Festival)',
-  'Gold Ship', 'Grass Wonder', 'Grass Wonder (Fantasy)', 'Haru Urara', 'Haru Urara (New Year)', 'Hishi Amazon', 'King Halo',
-  'Maruzensky', 'Matikanefukukitaru', 'Matikanefukukitaru (Full Armor)', 'Matikanetannhauser', 'Mayano Top Gun',
-  'Mayano Top Gun (Wedding)', 'Mejiro McQueen', 'Mejiro Ryan', 'Mihono Bourbon', 'Mihono Bourbon (Valentine)', 'Narita Brian',
-  'Nice Nature', 'Oguri Cap', 'Oguri Cap (Christmas)', 'Rice Shower', 'Sakura Bakushin O', 'Sakura Chiyono O', 'Satono Diamond',
-  'Seiun Sky', 'Seiun Sky (Ballroom)', 'Silence Suzuka', 'Smart Falcon', 'Special Week', 'Super Creek', 'Taiki Shuttle',
-  'TM Opera O (New Year)', 'Tokai Teio', 'Tosen Jordan', 'Vodka', 'Winning Ticket',
-]
+// Real talent ranks (1-5★) for the cards we've individually verified so far.
+// Anything not listed here (mostly newly-added cards from the wider
+// GameTora database) falls back to DEFAULT_TALENT_RANK — edit it in the
+// Horses tab once you know the real value.
+const TALENT_RANK_BY_CARD_ID = { 103201: 4, 101801: 4, 101802: 3, 102302: 3, 103801: 4, 100901: 4, 103702: 3, 101401: 4, 100501: 3, 100502: 3, 104001: 3, 104002: 3, 100701: 5, 101101: 4, 101102: 3, 105201: 4, 105202: 3, 101201: 3, 106101: 4, 100401: 3, 105601: 4, 105602: 3, 106201: 2, 102401: 4, 102402: 3, 101301: 4, 102701: 4, 102601: 3, 102602: 3, 101601: 4, 106001: 4, 100601: 3, 100602: 4, 103001: 3, 104101: 4, 106901: 3, 106701: 3, 102001: 3, 102002: 4, 100201: 3, 104601: 3, 100101: 3, 104501: 4, 101001: 3, 101502: 3, 100301: 3, 104801: 3, 100801: 4, 103501: 5 }
 
-// Real distance/style aptitude grades and talent rank (1-5★) for each
-// trainee's base game data, keyed by name so they line up with TRAINEE_NAMES
-// above. Costume variants (e.g. "(Wedding)") share their base outfit's
-// aptitude grades unless GameTora's data distinguishes them, but each
-// variant keeps its own real talent rank.
-export const TRAINEE_APTITUDES = {
-  'Agnes Tachyon': { talentRank: 4, cardId: 103201, aptitudes: { Sprint: 'G', Mile: 'D', Medium: 'A', Long: 'B', Dirt: 'G' }, styleApt: { Nige: 'E', Senkou: 'A', Sashi: 'B', Oikomi: 'F' } },
-  'Air Groove': { talentRank: 4, cardId: 101801, aptitudes: { Sprint: 'C', Mile: 'B', Medium: 'A', Long: 'E', Dirt: 'G' }, styleApt: { Nige: 'D', Senkou: 'A', Sashi: 'A', Oikomi: 'G' } },
-  'Air Groove (Wedding)': { talentRank: 3, cardId: 101802, aptitudes: { Sprint: 'C', Mile: 'B', Medium: 'A', Long: 'E', Dirt: 'G' }, styleApt: { Nige: 'D', Senkou: 'A', Sashi: 'A', Oikomi: 'G' } },
-  'Biwa Hayahide (Christmas)': { talentRank: 3, cardId: 102302, aptitudes: { Sprint: 'F', Mile: 'C', Medium: 'A', Long: 'A', Dirt: 'F' }, styleApt: { Nige: 'E', Senkou: 'A', Sashi: 'B', Oikomi: 'E' } },
-  'Curren Chan': { talentRank: 4, cardId: 103801, aptitudes: { Sprint: 'A', Mile: 'D', Medium: 'G', Long: 'G', Dirt: 'F' }, styleApt: { Nige: 'B', Senkou: 'A', Sashi: 'E', Oikomi: 'G' } },
-  'Daiwa Scarlet': { talentRank: 4, cardId: 100901, aptitudes: { Sprint: 'F', Mile: 'A', Medium: 'A', Long: 'B', Dirt: 'G' }, styleApt: { Nige: 'A', Senkou: 'A', Sashi: 'E', Oikomi: 'G' } },
-  'Eishin Flash (Valentine)': { talentRank: 3, cardId: 103702, aptitudes: { Sprint: 'G', Mile: 'F', Medium: 'A', Long: 'A', Dirt: 'G' }, styleApt: { Nige: 'G', Senkou: 'B', Sashi: 'A', Oikomi: 'C' } },
-  'El Condor Pasa': { talentRank: 4, cardId: 101401, aptitudes: { Sprint: 'F', Mile: 'A', Medium: 'A', Long: 'B', Dirt: 'B' }, styleApt: { Nige: 'E', Senkou: 'A', Sashi: 'A', Oikomi: 'C' } },
-  'Fuji Kiseki': { talentRank: 3, cardId: 100501, aptitudes: { Sprint: 'B', Mile: 'A', Medium: 'B', Long: 'E', Dirt: 'F' }, styleApt: { Nige: 'C', Senkou: 'A', Sashi: 'C', Oikomi: 'G' } },
-  'Fuji Kiseki (Ballroom)': { talentRank: 3, cardId: 100502, aptitudes: { Sprint: 'B', Mile: 'A', Medium: 'B', Long: 'E', Dirt: 'F' }, styleApt: { Nige: 'C', Senkou: 'A', Sashi: 'C', Oikomi: 'G' } },
-  'Gold City': { talentRank: 3, cardId: 104001, aptitudes: { Sprint: 'F', Mile: 'A', Medium: 'B', Long: 'B', Dirt: 'D' }, styleApt: { Nige: 'F', Senkou: 'A', Sashi: 'A', Oikomi: 'F' } },
-  'Gold City (Festival)': { talentRank: 3, cardId: 104002, aptitudes: { Sprint: 'F', Mile: 'A', Medium: 'B', Long: 'B', Dirt: 'D' }, styleApt: { Nige: 'F', Senkou: 'A', Sashi: 'A', Oikomi: 'F' } },
-  'Gold Ship': { talentRank: 5, cardId: 100701, aptitudes: { Sprint: 'G', Mile: 'C', Medium: 'A', Long: 'A', Dirt: 'G' }, styleApt: { Nige: 'G', Senkou: 'B', Sashi: 'B', Oikomi: 'A' } },
-  'Grass Wonder': { talentRank: 4, cardId: 101101, aptitudes: { Sprint: 'G', Mile: 'A', Medium: 'B', Long: 'A', Dirt: 'G' }, styleApt: { Nige: 'F', Senkou: 'A', Sashi: 'A', Oikomi: 'F' } },
-  'Grass Wonder (Fantasy)': { talentRank: 3, cardId: 101102, aptitudes: { Sprint: 'G', Mile: 'A', Medium: 'B', Long: 'A', Dirt: 'G' }, styleApt: { Nige: 'F', Senkou: 'A', Sashi: 'A', Oikomi: 'F' } },
-  'Haru Urara': { talentRank: 4, cardId: 105201, aptitudes: { Sprint: 'A', Mile: 'B', Medium: 'G', Long: 'G', Dirt: 'A' }, styleApt: { Nige: 'G', Senkou: 'G', Sashi: 'A', Oikomi: 'B' } },
-  'Haru Urara (New Year)': { talentRank: 3, cardId: 105202, aptitudes: { Sprint: 'A', Mile: 'A', Medium: 'G', Long: 'G', Dirt: 'A' }, styleApt: { Nige: 'G', Senkou: 'G', Sashi: 'A', Oikomi: 'B' } },
-  'Hishi Amazon': { talentRank: 3, cardId: 101201, aptitudes: { Sprint: 'D', Mile: 'A', Medium: 'A', Long: 'B', Dirt: 'E' }, styleApt: { Nige: 'G', Senkou: 'B', Sashi: 'C', Oikomi: 'A' } },
-  'King Halo': { talentRank: 4, cardId: 106101, aptitudes: { Sprint: 'A', Mile: 'B', Medium: 'B', Long: 'C', Dirt: 'G' }, styleApt: { Nige: 'G', Senkou: 'B', Sashi: 'A', Oikomi: 'D' } },
-  'Maruzensky': { talentRank: 3, cardId: 100401, aptitudes: { Sprint: 'B', Mile: 'A', Medium: 'B', Long: 'C', Dirt: 'D' }, styleApt: { Nige: 'A', Senkou: 'E', Sashi: 'G', Oikomi: 'G' } },
-  'Matikanefukukitaru': { talentRank: 4, cardId: 105601, aptitudes: { Sprint: 'F', Mile: 'C', Medium: 'A', Long: 'A', Dirt: 'F' }, styleApt: { Nige: 'G', Senkou: 'B', Sashi: 'A', Oikomi: 'F' } },
-  'Matikanefukukitaru (Full Armor)': { talentRank: 3, cardId: 105602, aptitudes: { Sprint: 'F', Mile: 'C', Medium: 'A', Long: 'A', Dirt: 'F' }, styleApt: { Nige: 'G', Senkou: 'B', Sashi: 'A', Oikomi: 'F' } },
-  'Matikanetannhauser': { talentRank: 2, cardId: 106201, aptitudes: { Sprint: 'G', Mile: 'D', Medium: 'A', Long: 'A', Dirt: 'G' }, styleApt: { Nige: 'F', Senkou: 'A', Sashi: 'A', Oikomi: 'E' } },
-  'Mayano Top Gun': { talentRank: 4, cardId: 102401, aptitudes: { Sprint: 'D', Mile: 'D', Medium: 'A', Long: 'A', Dirt: 'E' }, styleApt: { Nige: 'A', Senkou: 'A', Sashi: 'B', Oikomi: 'B' } },
-  'Mayano Top Gun (Wedding)': { talentRank: 3, cardId: 102402, aptitudes: { Sprint: 'D', Mile: 'D', Medium: 'A', Long: 'A', Dirt: 'E' }, styleApt: { Nige: 'A', Senkou: 'A', Sashi: 'B', Oikomi: 'B' } },
-  'Mejiro McQueen': { talentRank: 4, cardId: 101301, aptitudes: { Sprint: 'G', Mile: 'F', Medium: 'A', Long: 'A', Dirt: 'E' }, styleApt: { Nige: 'B', Senkou: 'A', Sashi: 'D', Oikomi: 'F' } },
-  'Mejiro Ryan': { talentRank: 4, cardId: 102701, aptitudes: { Sprint: 'E', Mile: 'C', Medium: 'A', Long: 'B', Dirt: 'G' }, styleApt: { Nige: 'F', Senkou: 'A', Sashi: 'A', Oikomi: 'F' } },
-  'Mihono Bourbon': { talentRank: 3, cardId: 102601, aptitudes: { Sprint: 'C', Mile: 'B', Medium: 'A', Long: 'B', Dirt: 'G' }, styleApt: { Nige: 'A', Senkou: 'E', Sashi: 'G', Oikomi: 'G' } },
-  'Mihono Bourbon (Valentine)': { talentRank: 3, cardId: 102602, aptitudes: { Sprint: 'C', Mile: 'B', Medium: 'A', Long: 'B', Dirt: 'G' }, styleApt: { Nige: 'A', Senkou: 'E', Sashi: 'G', Oikomi: 'G' } },
-  'Narita Brian': { talentRank: 4, cardId: 101601, aptitudes: { Sprint: 'F', Mile: 'B', Medium: 'A', Long: 'A', Dirt: 'G' }, styleApt: { Nige: 'G', Senkou: 'A', Sashi: 'A', Oikomi: 'D' } },
-  'Nice Nature': { talentRank: 4, cardId: 106001, aptitudes: { Sprint: 'G', Mile: 'C', Medium: 'A', Long: 'A', Dirt: 'G' }, styleApt: { Nige: 'F', Senkou: 'B', Sashi: 'A', Oikomi: 'D' } },
-  'Oguri Cap': { talentRank: 3, cardId: 100601, aptitudes: { Sprint: 'E', Mile: 'A', Medium: 'A', Long: 'B', Dirt: 'B' }, styleApt: { Nige: 'F', Senkou: 'A', Sashi: 'A', Oikomi: 'D' } },
-  'Oguri Cap (Christmas)': { talentRank: 4, cardId: 100602, aptitudes: { Sprint: 'E', Mile: 'A', Medium: 'A', Long: 'B', Dirt: 'B' }, styleApt: { Nige: 'F', Senkou: 'A', Sashi: 'A', Oikomi: 'D' } },
-  'Rice Shower': { talentRank: 3, cardId: 103001, aptitudes: { Sprint: 'E', Mile: 'C', Medium: 'A', Long: 'A', Dirt: 'G' }, styleApt: { Nige: 'B', Senkou: 'A', Sashi: 'C', Oikomi: 'G' } },
-  'Sakura Bakushin O': { talentRank: 4, cardId: 104101, aptitudes: { Sprint: 'A', Mile: 'B', Medium: 'G', Long: 'G', Dirt: 'G' }, styleApt: { Nige: 'A', Senkou: 'A', Sashi: 'F', Oikomi: 'G' } },
-  'Sakura Chiyono O': { talentRank: 3, cardId: 106901, aptitudes: { Sprint: 'E', Mile: 'A', Medium: 'A', Long: 'E', Dirt: 'G' }, styleApt: { Nige: 'B', Senkou: 'A', Sashi: 'F', Oikomi: 'G' } },
-  'Satono Diamond': { talentRank: 3, cardId: 106701, aptitudes: { Sprint: 'G', Mile: 'C', Medium: 'A', Long: 'A', Dirt: 'G' }, styleApt: { Nige: 'G', Senkou: 'B', Sashi: 'A', Oikomi: 'D' } },
-  'Seiun Sky': { talentRank: 3, cardId: 102001, aptitudes: { Sprint: 'G', Mile: 'C', Medium: 'A', Long: 'A', Dirt: 'G' }, styleApt: { Nige: 'A', Senkou: 'B', Sashi: 'D', Oikomi: 'E' } },
-  'Seiun Sky (Ballroom)': { talentRank: 4, cardId: 102002, aptitudes: { Sprint: 'G', Mile: 'C', Medium: 'A', Long: 'A', Dirt: 'G' }, styleApt: { Nige: 'A', Senkou: 'B', Sashi: 'D', Oikomi: 'E' } },
-  'Silence Suzuka': { talentRank: 3, cardId: 100201, aptitudes: { Sprint: 'D', Mile: 'A', Medium: 'A', Long: 'E', Dirt: 'G' }, styleApt: { Nige: 'A', Senkou: 'C', Sashi: 'E', Oikomi: 'G' } },
-  'Smart Falcon': { talentRank: 3, cardId: 104601, aptitudes: { Sprint: 'B', Mile: 'A', Medium: 'A', Long: 'E', Dirt: 'A' }, styleApt: { Nige: 'A', Senkou: 'D', Sashi: 'G', Oikomi: 'G' } },
-  'Special Week': { talentRank: 3, cardId: 100101, aptitudes: { Sprint: 'F', Mile: 'C', Medium: 'A', Long: 'A', Dirt: 'G' }, styleApt: { Nige: 'G', Senkou: 'A', Sashi: 'A', Oikomi: 'C' } },
-  'Super Creek': { talentRank: 4, cardId: 104501, aptitudes: { Sprint: 'G', Mile: 'G', Medium: 'A', Long: 'A', Dirt: 'G' }, styleApt: { Nige: 'D', Senkou: 'A', Sashi: 'B', Oikomi: 'G' } },
-  'Taiki Shuttle': { talentRank: 3, cardId: 101001, aptitudes: { Sprint: 'A', Mile: 'A', Medium: 'E', Long: 'G', Dirt: 'B' }, styleApt: { Nige: 'C', Senkou: 'A', Sashi: 'E', Oikomi: 'G' } },
-  'TM Opera O (New Year)': { talentRank: 3, cardId: 101502, aptitudes: { Sprint: 'G', Mile: 'E', Medium: 'A', Long: 'A', Dirt: 'E' }, styleApt: { Nige: 'C', Senkou: 'A', Sashi: 'A', Oikomi: 'G' } },
-  'Tokai Teio': { talentRank: 3, cardId: 100301, aptitudes: { Sprint: 'F', Mile: 'E', Medium: 'A', Long: 'B', Dirt: 'G' }, styleApt: { Nige: 'D', Senkou: 'A', Sashi: 'C', Oikomi: 'E' } },
-  'Tosen Jordan': { talentRank: 3, cardId: 104801, aptitudes: { Sprint: 'G', Mile: 'F', Medium: 'A', Long: 'B', Dirt: 'G' }, styleApt: { Nige: 'C', Senkou: 'A', Sashi: 'B', Oikomi: 'G' } },
-  'Vodka': { talentRank: 4, cardId: 100801, aptitudes: { Sprint: 'F', Mile: 'A', Medium: 'A', Long: 'F', Dirt: 'G' }, styleApt: { Nige: 'C', Senkou: 'B', Sashi: 'A', Oikomi: 'F' } },
-  'Winning Ticket': { talentRank: 5, cardId: 103501, aptitudes: { Sprint: 'G', Mile: 'F', Medium: 'A', Long: 'B', Dirt: 'G' }, styleApt: { Nige: 'G', Senkou: 'B', Sashi: 'A', Oikomi: 'G' } },
+// A card's display name is just its base character name, unless that
+// character has multiple costume cards bundled — then it's suffixed with
+// the card's real event/support title so alts stay distinguishable
+// (matches the same "Name [Title]" convention Card Library already uses).
+const cardCountByName = {}
+GAMETORA_CHARACTERS.forEach((c) => { cardCountByName[c.baseName] = (cardCountByName[c.baseName] ?? 0) + 1 })
+
+function displayName(card) {
+  return cardCountByName[card.baseName] > 1 ? `${card.baseName} ${card.title}` : card.baseName
 }
+
+export const TRAINEE_NAMES = GAMETORA_CHARACTERS.map(displayName).sort((a, b) => a.localeCompare(b))
+
+export const TRAINEE_APTITUDES = Object.fromEntries(
+  GAMETORA_CHARACTERS.map((card) => [
+    displayName(card),
+    {
+      talentRank: TALENT_RANK_BY_CARD_ID[card.cardId] ?? DEFAULT_TALENT_RANK,
+      cardId: card.cardId,
+      aptitudes: card.aptitudes,
+      styleApt: card.styleApt,
+    },
+  ]),
+)
 
 export function buildTraineeRoster() {
   return TRAINEE_NAMES.map((name) => {
