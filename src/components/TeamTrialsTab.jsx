@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { DISTANCES, STYLES, STYLE_LABELS, TRACK_TYPES, GRADES, isWeakGrade } from '../lib/constants'
 import { makeId } from '../lib/storage'
-import { GENERAL_PRINCIPLES, CURRENT_META } from '../lib/teamTrials'
+import { GENERAL_PRINCIPLES, CURRENT_META, META_VETERAN_PICKS } from '../lib/teamTrials'
 
 const SLOT_COUNT = 3
 
@@ -28,6 +28,11 @@ export default function TeamTrialsTab({ veterans, setVeterans, horses, cards, re
   const ownedCardNames = cards.map((c) => c.name)
   function ownsMetaCard(metaName) {
     return ownedCardNames.some((n) => n.startsWith(metaName))
+  }
+
+  const ownedHorseNames = horses.map((h) => h.name)
+  function ownsHorseNamed(metaName) {
+    return ownedHorseNames.some((n) => n.startsWith(metaName))
   }
 
   function veteransFor(distanceCategory) {
@@ -101,6 +106,32 @@ export default function TeamTrialsTab({ veterans, setVeterans, horses, cards, re
             )
           })}
         </div>
+      </div>
+
+      <h3 className="section-heading">Meta veteran picks <span className="ax-meta">(as of {CURRENT_META.asOf} — community Team Trials Guide)</span></h3>
+      <div className="form-grid-2" style={{ marginBottom: 28 }}>
+        {META_VETERAN_PICKS.map((entry) => (
+          <div className="ax-card" key={entry.distance}>
+            <h3 style={{ marginBottom: 10 }}>{entry.distance}</h3>
+            {[['core', 'F2P / low investment'], ['whale', 'Whale / 3★']].map(([tier, label]) => (
+              <div key={tier} style={{ marginBottom: tier === 'core' ? 14 : 0 }}>
+                <div className="label-micro" style={{ marginBottom: 6 }}>{label}</div>
+                {entry[tier].map((pick) => (
+                  <div key={pick.style} style={{ marginBottom: 8 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, alignItems: 'baseline' }}>
+                      <span className="ax-meta">{pick.style}</span>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <span className="text-body" style={{ fontWeight: 600 }}>{pick.name}</span>
+                        {ownsHorseNamed(pick.name) && <span className="ax-badge">Owned</span>}
+                      </span>
+                    </div>
+                    <div className="ax-meta" style={{ fontSize: '0.72rem' }}>{pick.note}</div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        ))}
       </div>
 
       {DISTANCES.map((distance) => {
