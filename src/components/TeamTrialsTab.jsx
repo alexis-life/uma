@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { DISTANCES, STYLES, STYLE_LABELS, TRACK_TYPES, GRADES, isWeakGrade } from '../lib/constants'
 import { makeId } from '../lib/storage'
-import { GENERAL_PRINCIPLES, CURRENT_META, META_VETERAN_PICKS } from '../lib/teamTrials'
+import { GENERAL_PRINCIPLES, CURRENT_META, META_VETERAN_PICKS, PARENTING_PRINCIPLES, RATING_TIERS } from '../lib/teamTrials'
 
 const SLOT_COUNT = 3
 
@@ -285,6 +285,40 @@ export default function TeamTrialsTab({ veterans, setVeterans, horses, cards, re
           </div>
         </div>
       )}
+
+      <h3 className="section-heading">Building good parents <span className="ax-meta">(sparks &amp; inheritance mechanics)</span></h3>
+      <div className="form-grid-2" style={{ marginBottom: 16 }}>
+        {PARENTING_PRINCIPLES.map((p) => (
+          <div className="ax-card" key={p.title}>
+            <h3 style={{ marginBottom: 6 }}>{p.title}</h3>
+            <p className="ax-meta">{p.detail}</p>
+          </div>
+        ))}
+      </div>
+      <div className="ax-card card-table-wrap" style={{ padding: 0, marginBottom: 28 }}>
+        <table>
+          <thead>
+            <tr>
+              <th>Rating</th>
+              <th>Range</th>
+              <th>1★</th>
+              <th>2★</th>
+              <th>3★</th>
+            </tr>
+          </thead>
+          <tbody>
+            {RATING_TIERS.map((t) => (
+              <tr key={t.label}>
+                <td>{t.label}</td>
+                <td className="ax-meta">{t.range}</td>
+                <td>{t.odds1}</td>
+                <td>{t.odds2}</td>
+                <td>{t.odds3}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       <h3 className="section-heading">General principles</h3>
       <div className="form-grid-2" style={{ marginBottom: 28 }}>

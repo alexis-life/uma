@@ -62,6 +62,38 @@ export const CURRENT_META = {
   ],
 }
 
+// Parent/grandparent-building reference — sourced from uma.guide's
+// Sparks & Inheritance guide (uma.guide/guides/sparks). This is mechanics,
+// not meta, so it shouldn't go stale the way CURRENT_META does.
+export const PARENTING_PRINCIPLES = [
+  {
+    title: 'Aim past rating breakpoints',
+    detail: 'White/Green Spark star odds jump at three rating tiers: 6,500-17,499 gives 45/50/5% for 1★/2★/3★, 17,500-28,799 gives 20/70/10%, and 28,800+ gives 17.5/70/12.5%. A small rating gain right at a breakpoint matters far more than the same gain mid-tier.',
+  },
+  {
+    title: 'Only A/S aptitudes produce Pink Sparks',
+    detail: "A parent's Pink (aptitude) Spark rolls only from their A or S aptitudes — training something to B or C gives it zero chance of being passed down. Decide what aptitude you want to inherit before you stop training it.",
+  },
+  {
+    title: 'Put your best Unique in the Parent slot, not Grandparent',
+    detail: "A direct Parent's inherited Unique (Green Spark) is guaranteed at the start of a career. A Grandparent's Unique only comes through an Inspiration Event, so it's far less reliable — save your best-built Uma for the Parent slot, not the Grandparent slot.",
+  },
+  {
+    title: 'Stack the same White Skill across your tree',
+    detail: 'Every Parent/Grandparent carrying the same White Skill raises everyone\'s odds of passing it down, from 20% at 0 copies up to 35% at 6 (40% → 70% for Gold Skills). This is the core idea behind "parent looping" — re-running careers with your own built parents compounds shared skills each generation.',
+  },
+  {
+    title: 'Build Affinity between your parent pair',
+    detail: "Spark odds scale by (1 + Affinity/100) — a 3★ Green Spark's base 15% chance becomes 45% at 200 Affinity. Affinity comes from a base Uma-pair value plus +3 for each shared G1 win between the two parents, and between each parent and their own grandparents.",
+  },
+]
+
+export const RATING_TIERS = [
+  { label: 'B – SS', range: '6,500 – 17,499', odds1: '45%', odds2: '50%', odds3: '5%' },
+  { label: 'SS – UE', range: '17,500 – 28,799', odds1: '20%', odds2: '70%', odds3: '10%' },
+  { label: 'UE+', range: '28,800+', odds1: '17.5%', odds2: '70%', odds3: '12.5%' },
+]
+
 // Meta veteran picks per distance category, from the Team Trials Guide's
 // Team Building section. "core" picks are meta at essentially any
 // investment level; "whale" swaps require 3-star/whale-tier trainees.
