@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { DISTANCES, STYLES, STYLE_LABELS, TRACK_TYPES, GRADES, isWeakGrade } from '../lib/constants'
+import { DISTANCES, STYLES, STYLE_LABELS, GRADES, isWeakGrade } from '../lib/constants'
 import { makeId } from '../lib/storage'
 import { GENERAL_PRINCIPLES, CURRENT_META, META_VETERAN_PICKS, PARENTING_PRINCIPLES, RATING_TIERS } from '../lib/teamTrials'
 
@@ -14,8 +14,8 @@ function emptyDraft(distanceCategory) {
     style: STYLES[0],
     distanceGrade: 'A',
     styleGrade: 'A',
-    trackType: 'Turf',
-    trackGrade: 'A',
+    turfGrade: 'A',
+    dirtGrade: 'G',
     isAce: false,
     reliableUnique: true,
     notes: '',
@@ -156,6 +156,8 @@ export default function TeamTrialsTab({ veterans, setVeterans, horses, cards, re
                 }
                 const weakDistance = isWeakGrade(veteran.distanceGrade)
                 const weakStyle = isWeakGrade(veteran.styleGrade)
+                const weakTurf = isWeakGrade(veteran.turfGrade)
+                const weakDirt = isWeakGrade(veteran.dirtGrade)
                 return (
                   <button key={veteran.id} className="tt-slot" onClick={() => openEdit(veteran)}>
                     {veteran.isAce && <span className="ax-badge tt-ace-badge">Ace</span>}
@@ -164,7 +166,8 @@ export default function TeamTrialsTab({ veterans, setVeterans, horses, cards, re
                     <div className="tt-slot-grades">
                       <span className={`ax-badge${weakDistance ? ' race-grade-weak' : ''}`}>{distance} {veteran.distanceGrade}</span>
                       <span className={`ax-badge${weakStyle ? ' race-grade-weak' : ''}`}>{STYLE_LABELS[veteran.style]} {veteran.styleGrade}</span>
-                      {veteran.trackType === 'Dirt' && <span className="ax-badge">Dirt {veteran.trackGrade}</span>}
+                      <span className={`ax-badge${weakTurf ? ' race-grade-weak' : ''}`}>Turf {veteran.turfGrade}</span>
+                      <span className={`ax-badge${weakDirt ? ' race-grade-weak' : ''}`}>Dirt {veteran.dirtGrade}</span>
                     </div>
                     {!veteran.reliableUnique && <div className="ax-meta" style={{ color: 'var(--error)' }}>⚠ unreliable Unique</div>}
                   </button>
@@ -201,15 +204,7 @@ export default function TeamTrialsTab({ veterans, setVeterans, horses, cards, re
             </div>
           </div>
 
-          <div className="form-grid-3">
-            <div className="form-row">
-              <label className="label-micro">Track type</label>
-              <select className="ax-input" value={draft.trackType} onChange={(e) => setDraft((d) => ({ ...d, trackType: e.target.value }))} disabled={readOnly}>
-                {TRACK_TYPES.map((t) => (
-                  <option key={t} value={t}>{t}</option>
-                ))}
-              </select>
-            </div>
+          <div className="form-grid-2">
             <div className="form-row">
               <label className="label-micro">Running style</label>
               <select className="ax-input" value={draft.style} onChange={(e) => setDraft((d) => ({ ...d, style: e.target.value }))} disabled={readOnly}>
@@ -230,8 +225,16 @@ export default function TeamTrialsTab({ veterans, setVeterans, horses, cards, re
 
           <div className="form-grid-3">
             <div className="form-row">
-              <label className="label-micro">{draft.trackType} aptitude (trained)</label>
-              <select className="ax-input" value={draft.trackGrade} onChange={(e) => setDraft((d) => ({ ...d, trackGrade: e.target.value }))} disabled={readOnly}>
+              <label className="label-micro">Turf aptitude (trained)</label>
+              <select className="ax-input" value={draft.turfGrade} onChange={(e) => setDraft((d) => ({ ...d, turfGrade: e.target.value }))} disabled={readOnly}>
+                {GRADES.map((g) => (
+                  <option key={g} value={g}>{g}</option>
+                ))}
+              </select>
+            </div>
+            <div className="form-row">
+              <label className="label-micro">Dirt aptitude (trained)</label>
+              <select className="ax-input" value={draft.dirtGrade} onChange={(e) => setDraft((d) => ({ ...d, dirtGrade: e.target.value }))} disabled={readOnly}>
                 {GRADES.map((g) => (
                   <option key={g} value={g}>{g}</option>
                 ))}
