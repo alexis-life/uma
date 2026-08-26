@@ -8,7 +8,7 @@ function typeLabel(type) {
   return type.charAt(0).toUpperCase() + type.slice(1)
 }
 
-const TYPE_ABBR = { speed: 'SPD', stamina: 'STA', power: 'PWR', guts: 'GUT', wisdom: 'WIS', friend: 'FRI' }
+const TYPE_ABBR = { speed: 'SPD', stamina: 'STA', power: 'PWR', guts: 'GUT', wisdom: 'WIS', friend: 'FRI', group: 'GRP' }
 
 function typeAbbr(type) {
   return TYPE_ABBR[type] ?? type.slice(0, 3).toUpperCase()
