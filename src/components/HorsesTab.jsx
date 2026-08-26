@@ -26,6 +26,28 @@ function bestStyle(styleApt) {
   return { styles: best ?? [], grade: GRADES[bestIdx] ?? null }
 }
 
+function bestDistance(aptitudes) {
+  let best = null
+  let bestIdx = Infinity
+  for (const distance of DISTANCES) {
+    const idx = gradeIndex(aptitudes[distance])
+    if (idx < bestIdx) {
+      bestIdx = idx
+      best = [distance]
+    } else if (idx === bestIdx) {
+      best.push(distance)
+    }
+  }
+  return { distances: best ?? [], grade: GRADES[bestIdx] ?? null }
+}
+
+function gradeTone(grade) {
+  const idx = gradeIndex(grade)
+  if (idx <= 1) return 'good' // S, A
+  if (idx <= 3) return 'mid'  // B, C
+  return 'weak'               // D, E, F, G
+}
+
 function charArtUrl(cardId) {
   if (!cardId) return null
   const charId = Math.floor(cardId / 100)
@@ -35,6 +57,7 @@ function charArtUrl(cardId) {
 const SORT_OPTIONS = {
   name: { label: 'Name', compare: (a, b) => a.name.localeCompare(b.name) },
   talentRank: { label: 'Talent rank (highest first)', compare: (a, b) => (b.talentRank ?? DEFAULT_TALENT_RANK) - (a.talentRank ?? DEFAULT_TALENT_RANK) || a.name.localeCompare(b.name) },
+  favorite: { label: 'Oshis first', compare: (a, b) => (b.favorite ? 1 : 0) - (a.favorite ? 1 : 0) || a.name.localeCompare(b.name) },
 }
 
 export default function HorsesTab({ horses, setHorses, readOnly = false }) {
@@ -44,13 +67,20 @@ export default function HorsesTab({ horses, setHorses, readOnly = false }) {
   const [gtResult, setGtResult] = useState(null)
   const [search, setSearch] = useState('')
   const [sortBy, setSortBy] = useState('name')
+  const [favoritesOnly, setFavoritesOnly] = useState(false)
+  const [detailOpen, setDetailOpen] = useState(false)
 
   const visibleHorses = useMemo(() => {
     const q = search.trim().toLowerCase()
     return horses
       .filter((h) => !q || h.name.toLowerCase().includes(q))
+      .filter((h) => !favoritesOnly || h.favorite)
       .sort(SORT_OPTIONS[sortBy].compare)
-  }, [horses, search, sortBy])
+  }, [horses, search, sortBy, favoritesOnly])
+
+  function toggleFavorite(id) {
+    setHorses((prev) => prev.map((h) => (h.id === id ? { ...h, favorite: !h.favorite } : h)))
+  }
 
   function addHorse() {
     const horse = {
@@ -58,11 +88,18 @@ export default function HorsesTab({ horses, setHorses, readOnly = false }) {
       name: 'New Trainee',
       talentRank: DEFAULT_TALENT_RANK,
       cardId: null,
+      favorite: false,
       aptitudes: defaultAptitudes('B'),
       styleApt: defaultStyleApt('B'),
     }
     setHorses((prev) => [...prev, horse])
     setSelectedId(horse.id)
+    setDetailOpen(true)
+  }
+
+  function openDetail(id) {
+    setSelectedId(id)
+    setDetailOpen(true)
   }
 
   function importTrainees() {
@@ -194,17 +231,38 @@ export default function HorsesTab({ horses, setHorses, readOnly = false }) {
                 <option key={key} value={key}>Sort: {label}</option>
               ))}
             </select>
+            <button
+              className={`ax-btn${favoritesOnly ? ' ax-btn--solid' : ''}`}
+              onClick={() => setFavoritesOnly((v) => !v)}
+            >
+              ♥ Oshis only
+            </button>
           </div>
           {visibleHorses.length === 0 ? (
             <div className="ax-card"><div className="ax-empty">No horses match this filter.</div></div>
           ) : (
         <div className="horse-gallery" style={{ marginBottom: 20 }}>
-          {visibleHorses.map((h) => (
+          {visibleHorses.map((h) => {
+            const dist = bestDistance(h.aptitudes)
+            const style = bestStyle(h.styleApt)
+            return (
             <button
               key={h.id}
-              className={`horse-tile${h.id === selectedId ? ' is-active' : ''}`}
-              onClick={() => setSelectedId(h.id)}
+              className={`horse-tile${h.id === selectedId && detailOpen ? ' is-active' : ''}${h.favorite ? ' is-favorite' : ''}`}
+              onClick={() => openDetail(h.id)}
             >
+              {!readOnly && (
+                <span
+                  role="button"
+                  tabIndex={0}
+                  aria-label={h.favorite ? `Remove ${h.name} from oshis` : `Mark ${h.name} as an oshi`}
+                  className={`fav-toggle horse-tile-fav${h.favorite ? ' is-on' : ''}`}
+                  onClick={(e) => { e.stopPropagation(); toggleFavorite(h.id) }}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); e.preventDefault(); toggleFavorite(h.id) } }}
+                >
+                  {h.favorite ? '♥' : '♡'}
+                </span>
+              )}
               {charArtUrl(h.cardId) ? (
                 <img
                   src={charArtUrl(h.cardId)}
@@ -216,79 +274,113 @@ export default function HorsesTab({ horses, setHorses, readOnly = false }) {
                 <div className="horse-tile-art" />
               )}
               <span className="horse-tile-name">{h.name}</span>
+              <span className="horse-tile-glance">
+                <span className={`grade-pill grade-pill--${gradeTone(dist.grade)}`}>
+                  {dist.distances[0]}<span className="grade-pill-grade">{dist.grade}</span>
+                </span>
+                <span className={`grade-pill grade-pill--${gradeTone(style.grade)}`}>
+                  {STYLE_LABELS[style.styles[0]]}<span className="grade-pill-grade">{style.grade}</span>
+                </span>
+              </span>
               <span className="ax-badge">★{h.talentRank ?? DEFAULT_TALENT_RANK}</span>
             </button>
-          ))}
+          )})}
         </div>
           )}
         </>
       )}
 
-      <div className="horses-layout">
-        <div className="ax-card">
-          {!selected ? (
-            <div className="ax-empty">Select a horse to view or edit its aptitudes.</div>
-          ) : (
-            <>
-              <div className="form-grid-2" style={{ marginBottom: 0 }}>
-                <div className="form-row">
-                  <label className="label-micro">Name</label>
-                  <input
-                    className="ax-input"
-                    type="text"
-                    value={selected.name}
-                    onChange={(e) => updateSelected({ name: e.target.value })}
-                    disabled={readOnly}
+      {selected && detailOpen && (
+        <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setDetailOpen(false) }}>
+          <div className="ax-card modal-panel">
+            <div className="modal-panel-head">
+              <h2 className="ax-title" style={{ marginBottom: 0 }}>{selected.name}</h2>
+              <button className="ax-btn modal-close" onClick={() => setDetailOpen(false)} aria-label="Close">✕</button>
+            </div>
+
+            <div className="modal-body">
+              {charArtUrl(selected.cardId) && (
+                <div className="modal-art-col">
+                  <img
+                    src={charArtUrl(selected.cardId)}
+                    alt={selected.name}
+                    className="horse-art"
+                    onError={(e) => { e.currentTarget.style.display = 'none' }}
                   />
                 </div>
-                <div className="form-row">
-                  <label className="label-micro">Talent rank</label>
-                  <select className="ax-input" value={selected.talentRank ?? DEFAULT_TALENT_RANK} onChange={(e) => updateTalentRank(e.target.value)} disabled={readOnly}>
-                    {TALENT_RANKS.map((r) => (
-                      <option key={r} value={r}>{'★'.repeat(r)} ({r})</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {charArtUrl(selected.cardId) && (
-                <img
-                  src={charArtUrl(selected.cardId)}
-                  alt={selected.name}
-                  className="horse-art"
-                  onError={(e) => { e.currentTarget.style.display = 'none' }}
-                />
               )}
 
-              <h3 style={{ marginBottom: 10 }}>Distance aptitude</h3>
-              <div className="grade-grid" style={{ marginBottom: 20 }}>
-                {DISTANCES.map((d) => (
-                  <div className="grade-field" key={d}>
-                    <label className="label-micro">{d}</label>
-                    <div className="ax-input grade-display">{selected.aptitudes[d]}</div>
+              <div className="modal-info-col">
+                <div className="form-grid-2" style={{ marginBottom: 0 }}>
+                  <div className="form-row">
+                    <label className="label-micro">Name</label>
+                    <div className="fav-toggle-inline">
+                      <input
+                        className="ax-input"
+                        type="text"
+                        value={selected.name}
+                        onChange={(e) => updateSelected({ name: e.target.value })}
+                        disabled={readOnly}
+                        style={{ flex: 1 }}
+                      />
+                      <span
+                        role="button"
+                        tabIndex={readOnly ? -1 : 0}
+                        aria-label={selected.favorite ? `Remove ${selected.name} from oshis` : `Mark ${selected.name} as an oshi`}
+                        className={`fav-toggle${selected.favorite ? ' is-on' : ''}`}
+                        onClick={() => !readOnly && toggleFavorite(selected.id)}
+                        onKeyDown={(e) => { if (!readOnly && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); toggleFavorite(selected.id) } }}
+                      >
+                        {selected.favorite ? '♥' : '♡'}
+                      </span>
+                    </div>
                   </div>
-                ))}
-              </div>
-
-              <h3 style={{ marginBottom: 10 }}>Running-style aptitude</h3>
-              <div className="grade-grid" style={{ marginBottom: 20 }}>
-                {STYLES.map((s) => (
-                  <div className="grade-field" key={s}>
-                    <label className="label-micro">{STYLE_LABELS[s]}</label>
-                    <div className="ax-input grade-display">{selected.styleApt[s]}</div>
+                  <div className="form-row">
+                    <label className="label-micro">Talent rank</label>
+                    {readOnly ? (
+                      <div className="ax-input grade-display">{'★'.repeat(selected.talentRank ?? DEFAULT_TALENT_RANK)} ({selected.talentRank ?? DEFAULT_TALENT_RANK})</div>
+                    ) : (
+                      <select className="ax-input" value={selected.talentRank ?? DEFAULT_TALENT_RANK} onChange={(e) => updateTalentRank(e.target.value)}>
+                        {TALENT_RANKS.map((r) => (
+                          <option key={r} value={r}>{'★'.repeat(r)} ({r})</option>
+                        ))}
+                      </select>
+                    )}
                   </div>
-                ))}
-              </div>
+                </div>
 
-              <div className="ax-section-bar--light ax-section-bar" style={{ justifyContent: 'flex-start', marginBottom: 20 }}>
-                Best style: {bestStyle(selected.styleApt).styles.map((s) => STYLE_LABELS[s]).join(' / ')} ({bestStyle(selected.styleApt).grade})
-              </div>
+                <div className="ax-section-bar--light ax-section-bar" style={{ justifyContent: 'flex-start', marginBottom: 16 }}>
+                  Best Team Trials slot: {bestDistance(selected.aptitudes).distances.join(' / ')} ({bestDistance(selected.aptitudes).grade})
+                  {' + '}
+                  {bestStyle(selected.styleApt).styles.map((s) => STYLE_LABELS[s]).join(' / ')} ({bestStyle(selected.styleApt).grade})
+                </div>
 
-              {!readOnly && <button className="ax-btn" onClick={removeSelected}>Remove horse</button>}
-            </>
-          )}
+                <h3 style={{ marginBottom: 10 }}>Distance aptitude</h3>
+                <div className="grade-grid" style={{ marginBottom: 20 }}>
+                  {DISTANCES.map((d) => (
+                    <div className="grade-field" key={d}>
+                      <label className="label-micro">{d}</label>
+                      <div className="ax-input grade-display">{selected.aptitudes[d]}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <h3 style={{ marginBottom: 10 }}>Running-style aptitude</h3>
+                <div className="grade-grid" style={{ marginBottom: 20 }}>
+                  {STYLES.map((s) => (
+                    <div className="grade-field" key={s}>
+                      <label className="label-micro">{STYLE_LABELS[s]}</label>
+                      <div className="ax-input grade-display">{selected.styleApt[s]}</div>
+                    </div>
+                  ))}
+                </div>
+
+                {!readOnly && <button className="ax-btn" onClick={removeSelected}>Remove horse</button>}
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }
