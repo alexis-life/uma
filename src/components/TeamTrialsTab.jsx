@@ -164,10 +164,10 @@ export default function TeamTrialsTab({ veterans, setVeterans, horses, cards, re
                     <div className="text-body" style={{ fontWeight: 600 }}>{veteran.name}</div>
                     <div className="ax-meta">{STYLE_LABELS[veteran.style]}</div>
                     <div className="tt-slot-grades">
-                      <span className={`ax-badge${weakDistance ? ' race-grade-weak' : ''}`}>{distance} {veteran.distanceGrade}</span>
-                      <span className={`ax-badge${weakStyle ? ' race-grade-weak' : ''}`}>{STYLE_LABELS[veteran.style]} {veteran.styleGrade}</span>
-                      <span className={`ax-badge${weakTurf ? ' race-grade-weak' : ''}`}>Turf {veteran.turfGrade}</span>
-                      <span className={`ax-badge${weakDirt ? ' race-grade-weak' : ''}`}>Dirt {veteran.dirtGrade}</span>
+                      <span className={`ax-badge${veteran.distanceGrade === 'S' ? ' race-grade-s' : weakDistance ? ' race-grade-weak' : ''}`}>{distance} {veteran.distanceGrade}</span>
+                      <span className={`ax-badge${veteran.styleGrade === 'S' ? ' race-grade-s' : weakStyle ? ' race-grade-weak' : ''}`}>{STYLE_LABELS[veteran.style]} {veteran.styleGrade}</span>
+                      <span className={`ax-badge${veteran.turfGrade === 'S' ? ' race-grade-s' : weakTurf ? ' race-grade-weak' : ''}`}>Turf {veteran.turfGrade}</span>
+                      <span className={`ax-badge${veteran.dirtGrade === 'S' ? ' race-grade-s' : weakDirt ? ' race-grade-weak' : ''}`}>Dirt {veteran.dirtGrade}</span>
                     </div>
                     {!veteran.reliableUnique && <div className="ax-meta" style={{ color: 'var(--error)' }}>⚠ unreliable Unique</div>}
                   </button>

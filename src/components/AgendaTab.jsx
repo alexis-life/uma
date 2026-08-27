@@ -75,7 +75,7 @@ export default function AgendaTab({ agenda, setAgenda, horses, readOnly = false 
           <div className="text-body" style={{ fontWeight: 600 }}>{race.name}</div>
           <div className="ax-meta">{race.terrain === 'dirt' ? 'Dirt' : 'Turf'} · {race.distance}m</div>
         </div>
-        <span className={`ax-badge${weak ? ' race-grade-weak' : ''}`}>{grade}</span>
+        <span className={`ax-badge${grade === 'S' ? ' race-grade-s' : weak ? ' race-grade-weak' : ''}`}>{grade}</span>
       </label>
     )
   }

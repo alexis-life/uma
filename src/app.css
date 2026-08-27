@@ -172,6 +172,15 @@
   flex-shrink: 0;
 }
 
+.modal-title-input {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--c9);
+  padding: 4px 10px;
+  flex: 1;
+  min-width: 0;
+}
+
 .modal-body {
   display: flex;
   gap: 24px;
@@ -441,6 +450,8 @@
 .race-option-info { flex: 1; }
 
 .race-grade-weak { background: var(--error-bg); color: var(--error); }
+
+.race-grade-s { background: var(--c6); color: #fff; font-weight: 700; }
 
 /* ── Team Trials tab ────────────────────────────────── */
 .tt-suggestions {
