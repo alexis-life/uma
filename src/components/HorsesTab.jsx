@@ -175,6 +175,19 @@ export default function HorsesTab({ horses, setHorses, readOnly = false }) {
 
   return (
     <div>
+      <details className="ax-card" style={{ marginBottom: 20 }}>
+        <summary style={{ cursor: 'pointer', fontWeight: 700 }}>In-game favorite icon &amp; notes key</summary>
+        <p className="ax-meta" style={{ margin: '10px 0' }}>
+          Reference for tagging veterans inside Umamusume itself (Favorite Icon Selection + the notes field on a
+          trained character) — this app doesn't read or store these, it's just a cheat sheet.
+        </p>
+        <ul style={{ margin: 0, paddingLeft: 18, display: 'grid', gap: 6 }}>
+          <li><strong>🍰 Cake</strong> — active breeding parent</li>
+          <li><strong>👟 Shoe icons</strong> — one per Team Trial category (Sprint/Mile/Medium/Long/Dirt); tag whichever horse is your current pick for that slot, move it when you swap</li>
+          <li><strong>Notes field</strong> — capped at 9 characters in-game, so use short tags like <code>PARENT</code>, <code>BRIDGE</code>, or <code>DIRT</code> instead of a full description</li>
+        </ul>
+      </details>
+
       <div className="ax-header-actions" style={{ padding: 0, marginBottom: 20 }}>
         {!readOnly && (
           <>
@@ -294,7 +307,28 @@ export default function HorsesTab({ horses, setHorses, readOnly = false }) {
         <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setDetailOpen(false) }}>
           <div className="ax-card modal-panel">
             <div className="modal-panel-head">
-              <h2 className="ax-title" style={{ marginBottom: 0 }}>{selected.name}</h2>
+              <div className="fav-toggle-inline" style={{ flex: 1 }}>
+                {readOnly ? (
+                  <h2 className="ax-title" style={{ marginBottom: 0 }}>{selected.name}</h2>
+                ) : (
+                  <input
+                    className="ax-input modal-title-input"
+                    type="text"
+                    value={selected.name}
+                    onChange={(e) => updateSelected({ name: e.target.value })}
+                  />
+                )}
+                <span
+                  role="button"
+                  tabIndex={readOnly ? -1 : 0}
+                  aria-label={selected.favorite ? `Remove ${selected.name} from oshis` : `Mark ${selected.name} as an oshi`}
+                  className={`fav-toggle${selected.favorite ? ' is-on' : ''}`}
+                  onClick={() => !readOnly && toggleFavorite(selected.id)}
+                  onKeyDown={(e) => { if (!readOnly && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); toggleFavorite(selected.id) } }}
+                >
+                  {selected.favorite ? '♥' : '♡'}
+                </span>
+              </div>
               <button className="ax-btn modal-close" onClick={() => setDetailOpen(false)} aria-label="Close">✕</button>
             </div>
 
@@ -311,42 +345,17 @@ export default function HorsesTab({ horses, setHorses, readOnly = false }) {
               )}
 
               <div className="modal-info-col">
-                <div className="form-grid-2" style={{ marginBottom: 0 }}>
-                  <div className="form-row">
-                    <label className="label-micro">Name</label>
-                    <div className="fav-toggle-inline">
-                      <input
-                        className="ax-input"
-                        type="text"
-                        value={selected.name}
-                        onChange={(e) => updateSelected({ name: e.target.value })}
-                        disabled={readOnly}
-                        style={{ flex: 1 }}
-                      />
-                      <span
-                        role="button"
-                        tabIndex={readOnly ? -1 : 0}
-                        aria-label={selected.favorite ? `Remove ${selected.name} from oshis` : `Mark ${selected.name} as an oshi`}
-                        className={`fav-toggle${selected.favorite ? ' is-on' : ''}`}
-                        onClick={() => !readOnly && toggleFavorite(selected.id)}
-                        onKeyDown={(e) => { if (!readOnly && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); toggleFavorite(selected.id) } }}
-                      >
-                        {selected.favorite ? '♥' : '♡'}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="form-row">
-                    <label className="label-micro">Talent rank</label>
-                    {readOnly ? (
-                      <div className="ax-input grade-display">{'★'.repeat(selected.talentRank ?? DEFAULT_TALENT_RANK)} ({selected.talentRank ?? DEFAULT_TALENT_RANK})</div>
-                    ) : (
-                      <select className="ax-input" value={selected.talentRank ?? DEFAULT_TALENT_RANK} onChange={(e) => updateTalentRank(e.target.value)}>
-                        {TALENT_RANKS.map((r) => (
-                          <option key={r} value={r}>{'★'.repeat(r)} ({r})</option>
-                        ))}
-                      </select>
-                    )}
-                  </div>
+                <div className="form-row" style={{ maxWidth: 220 }}>
+                  <label className="label-micro">Talent rank</label>
+                  {readOnly ? (
+                    <div className="ax-input grade-display">{'★'.repeat(selected.talentRank ?? DEFAULT_TALENT_RANK)} ({selected.talentRank ?? DEFAULT_TALENT_RANK})</div>
+                  ) : (
+                    <select className="ax-input" value={selected.talentRank ?? DEFAULT_TALENT_RANK} onChange={(e) => updateTalentRank(e.target.value)}>
+                      {TALENT_RANKS.map((r) => (
+                        <option key={r} value={r}>{'★'.repeat(r)} ({r})</option>
+                      ))}
+                    </select>
+                  )}
                 </div>
 
                 <div className="ax-section-bar--light ax-section-bar" style={{ justifyContent: 'flex-start', marginBottom: 16 }}>
